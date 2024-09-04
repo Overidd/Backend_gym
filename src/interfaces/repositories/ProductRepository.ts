@@ -1,6 +1,6 @@
 import type { Product } from '../../types/product';
 
-export interface ProductRepository {
+export interface IProductRepository {
     getAll(): Promise<Product[]>;
     getById(id: number): Promise<Product | null>;
     create(product: Omit<Product, 'id'>): Promise<Product>;
