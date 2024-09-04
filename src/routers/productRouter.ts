@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import type { ProductRepository } from '../interfaces/repositories/ProductRepository';
+import type { IProductRepository } from '../interfaces/repositories/ProductRepository';
 
 type Dependencies = {
-    productRepository: ProductRepository;
+    productRepository: IProductRepository;
 }
 
 export default function ({ productRepository }: Dependencies): Router {
