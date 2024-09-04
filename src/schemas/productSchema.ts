@@ -11,7 +11,7 @@ export const productSchema = z.object({
     description: z.string().min(1).max(500),
     price: priceVal,
     stock: z.number().int().min(0),
-    isActive: z.boolean(),
+    isActive: z.boolean().default(true),
     createdAt: z.date(),
     updatedAt: z.date(),
 });
