@@ -1,4 +1,4 @@
-import type { Product, ProductUpdate, ProductWithoutId } from '../../types/product';
+import type { Product, ProductUpdate, ProductWithoutId } from '../../types/productTypes';
 
 export interface IProductRepository {
     getAll(): Promise<Product[]>;
