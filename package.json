@@ -2,12 +2,11 @@
   "name": "backend_gimnasio",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "test": "echo \"Comando para tests no especificado (de momento)\" && exit 1"
+    "test": "node --test",
+    "build:test": "npm run build && npm run test"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +21,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^22.5.0",
+    "@types/supertest": "6.0.2",
+    "supertest": "7.0.0",
     "typescript": "^5.5.4"
   }
 }
