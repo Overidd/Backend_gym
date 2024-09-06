@@ -9,4 +9,4 @@ export abstract class ProductRepository {
    abstract create(product: CreateProductDTO): Promise<ProductEntity>;
    abstract update(id: number, product:UpdateProductDTO): Promise<ProductEntity | null>;
    abstract delete(id: number): Promise<boolean>;
-}
+} 

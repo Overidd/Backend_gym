@@ -13,9 +13,10 @@ export class ProductController {
    public getAllProducts = async (_req: Request, res: Response) => {
       try {
          const products = await this.productRepository.getAll();
+
          res.status(200).json({
             'message': 'get all products',
-            'data': products
+            'data': products,
          })
 
       } catch (error) {
@@ -51,7 +52,11 @@ export class ProductController {
    }
    public createProduct = async (req: Request, res: Response) => {
       try {
-         const [error, updateTodoDto] = CreateProductDTO.create(req.body)
+         const images = req.files as Express.Multer.File[];
+         const pathImages = images.map(file => file.path)
+
+         const [error, updateTodoDto] = CreateProductDTO.create(req.body, pathImages)
+
          if (error) {
             return res.status(400).json({
                'message': 'Error creating product',
@@ -82,8 +87,12 @@ export class ProductController {
    public updateProduct = async (req: Request, res: Response) => {
       try {
          const productId = parseInt(req.params.id)
+         const images = req.files as Express.Multer.File[];
+         const pathImages = images.map(file => file.path)
+         //? Mas adelante se deberia conectar en https://cloudinary.com/
+      
 
-         const [error, updateTodoDto] = UpdateProductDTO.update(req.body)
+         const [error, updateTodoDto] = UpdateProductDTO.update(req.body, pathImages)
          if (error) {
             return res.status(400).json({
                'message': 'Error updating product',

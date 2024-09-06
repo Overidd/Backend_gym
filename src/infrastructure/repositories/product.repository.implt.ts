@@ -7,7 +7,7 @@ import { ProductRepository } from "../../domain/repositories";
 export class ProductRespositoryImpl implements ProductRepository {
    constructor(
       private readonly datasource: ProductDatasource,
-   ){}
+   ) { }
 
    getAll(): Promise<ProductEntity[]> {
       return this.datasource.getAll()
@@ -18,7 +18,7 @@ export class ProductRespositoryImpl implements ProductRepository {
    create(product: CreateProductDTO): Promise<ProductEntity> {
       return this.datasource.create(product)
    }
-   update(id: number, product: UpdateProductDTO): Promise<ProductEntity | null> {
+    update(id: number, product: UpdateProductDTO): Promise<ProductEntity | null> {
       return this.datasource.update(id, product)
    }
    delete(id: number): Promise<boolean> {

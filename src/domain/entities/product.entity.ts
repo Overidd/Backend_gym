@@ -1,5 +1,3 @@
-
-
 export class ProductEntity {
 
    constructor(
@@ -9,13 +7,18 @@ export class ProductEntity {
       public price: number,
       public stock: number,
       public isActive: boolean,
-      public createdAt: Date | null,
-      public updatedAt: Date | null,
+      public images?: string[], // Arreglo de URLs de imágenes
+      public createdAt?: Date | null,
+      public updatedAt?: Date | null,
    ) { }
 
    public static fromObject(obj: { [key: string]: any }): ProductEntity {
-      const { id, name, description, price, stock, isActive, createdAt, updatedAt } = obj;
+      const { id, name, description, price, stock, isActive, createdAt, updatedAt, product_image } = obj;
 
-      return new ProductEntity(id, name, description, price, stock, isActive, createdAt, updatedAt);
+      const images = product_image ? product_image.map((img: { id: number, image: string }) => {
+         return {id: img.id, image: img.image}
+      }) : undefined;
+
+      return new ProductEntity(id, name, description, price, stock, isActive, images, createdAt, updatedAt);
    }
 }

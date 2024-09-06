@@ -21,10 +21,10 @@ export class Server {
       //* Middlewares
       this.app.use(express.json());
       this.app.use(cors());
-      this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
       //* Routes
-      this.app.use(this.router);
+      this.app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
+      this.app.use('/', this.router);
 
       //* Start the server
       this.app.listen(this.port, () => {

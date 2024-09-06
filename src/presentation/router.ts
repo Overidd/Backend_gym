@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import productRouter from './products/productRouter'
+import {ProductRouter} from './products/productRouter'
 
 // Router Principal
 export class AppRouter {
@@ -7,7 +7,7 @@ export class AppRouter {
    static get router(): Router {
 
       const router = Router()
-      router.get('/api/product', productRouter)
+      router.use('/api/v1/product', ProductRouter.router)
 
       return router
    }

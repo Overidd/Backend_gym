@@ -1,23 +1,6 @@
 import z from 'zod';
+import { ProductCreate, productSchema } from './chesma.producto';
 
-// Validación del precio
-const priceVal = z.number().min(0).refine((value) => !Number.isInteger(value), {
-   message: 'El precio debe ser un número decimal válido.',
-});
-
-export const productSchema = z.object({
-   id: z.number().int(),
-   name: z.string().min(1).max(255),
-   description: z.string().min(1).max(500),
-   price: priceVal,
-   stock: z.number().int().min(0),
-   isActive: z.boolean().default(true),
-   createdAt: z.date(),
-   updatedAt: z.date(),
-});
-
-export type Product = z.infer<typeof productSchema>;
-export type ProductBody = Omit<Product, 'id'>;
 
 export class CreateProductDTO {
    constructor(
@@ -26,22 +9,33 @@ export class CreateProductDTO {
       public readonly price: number,
       public readonly stock: number,
       public readonly isActive: boolean,
-      public readonly createdAt: Date,
-      public readonly updatedAt: Date,
+      public readonly images?: string[],
    ) { }
 
-   static create(props: ProductBody): [string?, CreateProductDTO?] {
+   static create(props: ProductCreate, images?: string[]): [string?, CreateProductDTO?] {
       try {
+         if (typeof props.price === 'string') {
+            props.price = parseFloat(props.price);
+         }
+
+         if (typeof props.stock === 'string') {
+            props.stock = parseInt(props.stock, 10);
+         }
+
+         if (typeof props.imageIdsDelete === 'string') {
+            props.imageIdsDelete = JSON.parse(props.imageIdsDelete);
+         }
+         const validatedImages = images?.length ? images : undefined;
+
          // Validar los datos usando Zod
-         const validatedProps = productSchema.omit({ id: true }).parse(props);
+         const validatedProps = productSchema.parse(props);
 
          // Si todo es correcto, crear la instancia
-         const { name, description, price, stock, isActive, createdAt, updatedAt } = validatedProps;
+         const { name, description, price, stock, isActive } = validatedProps;
 
-         return [undefined, new CreateProductDTO(name, description, price, stock, isActive, createdAt, updatedAt)];
+         return [undefined, new CreateProductDTO(name, description, price, stock, isActive, validatedImages)];
 
       } catch (error) {
-         // Capturar y retornar el error de Zod
          if (error instanceof z.ZodError) {
             return [error.errors.map(e => e.message).join(', '), undefined];
          }
