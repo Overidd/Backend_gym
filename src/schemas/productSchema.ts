@@ -1,9 +1,8 @@
 import z from 'zod';
 
-// Zod no tiene algo como `z.number().float()` para esto
-// TO FIX: FALLA CON NÚMEROS CON PARTE DECIMAL 0
-// 6.0, 81.0...
-const priceVal = z.number().min(0).refine((value) => !Number.isInteger(value));
+// número entero o decimal con 2 dígitos en la parte decimal
+// No he encontrado una forma mejor de implementarlo con Zod
+const priceVal = z.number().min(0).multipleOf(0.01);
 
 export const productSchema = z.object({
     id: z.number().int(),
