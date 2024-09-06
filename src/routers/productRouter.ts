@@ -8,7 +8,7 @@ type Dependencies = {
 export default function ({ productRepository }: Dependencies): Router {
     const router = Router();
 
-    router.get('/allProducts', async (req, res) => {
+    router.get('/all', async (req, res) => {
         const products = await productRepository.getAll();
         if (products.length === 0) {
             res.status(404).send({ message: 'No se encontró ningún producto' });
@@ -18,7 +18,7 @@ export default function ({ productRepository }: Dependencies): Router {
         res.send(products);
     });
 
-    router.get('/product/:id', async (req, res) => {
+    router.get('/:id', async (req, res) => {
         const { id } = req.params;
         const parsedId = parseInt(id);
 
