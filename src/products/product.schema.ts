@@ -44,3 +44,8 @@ export const publicProductSchema = productSchema.pick({
 });
 
 export const updateProductSchema = productSchema.partial();
+// name: string
+//     description: string
+//     price: float
+//     stock: integer
+//     isActive: boolean

@@ -4,6 +4,8 @@ import { IProduct, CreateProductDTO, UpdateProductDTO } from "./product.DTOS";
 
 export class ProductRepository implements IProductRepository {
    async getAll(): Promise<IProduct[]> {
+
+      // se Obtiene todo la informacion de la tabla product
       const products = await prisma.product.findMany({
          where: { isActive: true },
          include: {
@@ -20,23 +22,30 @@ export class ProductRepository implements IProductRepository {
       return products
    }
    async getById(id: number): Promise<IProduct | null> {
+
+      // se obtiene la informacion del producto por el id
+      // Se incluye la relacion con las imagenes del producto
       const product = await prisma.product.findUnique({
          where: { id },
          include: {
             product_image: true,
          }
       });
-
+      
+      // Si el producto no está activo, se lanza una excepción
       if (product?.isActive === false) throw 'Producto desactivado';
-
+      
+      // Si no se encuentra el producto, se lanza una excepción
       if (!product) throw 'Producto no encontrado';
 
       return product
    }
    async create(product: CreateProductDTO): Promise<IProduct> {
-
+      
+      //El método $transaction() en Prisma permite agrupar varias operaciones de la base de datos. Esto es útil cuando necesitas realizar varias operaciones relacionadas, y de asegurarte de que todas se completen correctamente, si ocurre alguna falla, se revertir todos los datos, de esa forma nos aseguramos de no guardar data basura.
       const createdProduct = await prisma.$transaction(async (prisma) => {
-
+         
+         // Crea el producto un producto
          const newProduct = await prisma.product.create({
             data: {
                name: product.name,
@@ -48,7 +57,7 @@ export class ProductRepository implements IProductRepository {
             },
          });
 
-         // Guarda nuevas imágenes
+         // Guarda nuevas imágenes en la tabla (producto_imagen)
          if (product.images != undefined && product.images?.length > 0) {
             await prisma.product_image.createMany({
                data: product.images.map((image) => ({

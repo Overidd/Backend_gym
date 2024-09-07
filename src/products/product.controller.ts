@@ -64,7 +64,7 @@ export class ProductController {
             const product = await this.productRepository.create(updateTodoDto!)
 
             res.status(201).json({
-                'message': 'product created',
+                'message': 'Product created successfully',
                 'data': product
             })
 
