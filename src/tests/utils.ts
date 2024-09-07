@@ -1,4 +1,4 @@
-import type { Product, PublicProduct, UpdateProduct } from "../products/product.types";
+import type { IProduct as Product, CreateProduct as PublicProduct, UpdateProduct } from "../products/product.DTOS";
 import type { IProductRepository } from "../interfaces/repositories/ProductRepository";
 
 
@@ -50,7 +50,8 @@ class MockProductRepository implements IProductRepository {
         const newProduct: Product = {
             id: this.products.length + 1, ...product,
             createdAt: new Date(),
-            updatedAt: new Date()
+            updatedAt: new Date(),
+            isActive: false,
         };
         this.products.push(newProduct);
         return newProduct;
