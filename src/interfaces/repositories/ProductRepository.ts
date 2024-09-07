@@ -1,4 +1,4 @@
-import type { IProduct, UpdateProductDTO, CreateProductDTO } from '../../products/product.DTOS';
+import type { IProduct, UpdateProductDTO, CreateProductDTO } from '../../products';
 
 export interface IProductRepository {
     getAll(): Promise<IProduct[]>;

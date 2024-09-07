@@ -1,6 +1,6 @@
 import { prisma } from "../data/postgres";
 import { IProductRepository } from "../interfaces/repositories";
-import { IProduct, CreateProductDTO, UpdateProductDTO } from "./product.DTOS";
+import { IProduct, CreateProductDTO, UpdateProductDTO } from ".";
 
 export class ProductRepository implements IProductRepository {
    async getAll(): Promise<IProduct[]> {

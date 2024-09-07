@@ -1,7 +1,6 @@
 import { IProductRepository } from "../interfaces/repositories/ProductRepository";
+import {ProductRepository,CreateProductDTO,UpdateProductDTO} from '.';
 import type { Request, Response } from 'express';
-import { ProductRepository } from "./productRepository";
-import { CreateProductDTO, UpdateProductDTO } from "./product.DTOS";
 
 export class ProductController {
     constructor(

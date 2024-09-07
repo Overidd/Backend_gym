@@ -1,9 +1,7 @@
 import type { IProductRepository } from '../interfaces/repositories';
-import { ProductController } from './product.controller';
-import { Router } from 'express';
-import { ProductRepository } from './productRepository'
+import { ProductController, ProductRepository } from '.';
 import multer from 'multer';
-
+import { Router } from 'express';
 
 // Configura de multer temporal
 const storage = multer.diskStorage({
