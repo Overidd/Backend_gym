@@ -1,20 +1,10 @@
-import express from 'express';
-import cors from 'cors';
+import { Server } from './server';
+import { AppRouter } from './app.router';
+import { envs } from './config';
 
-import { IProductRepository } from './interfaces/repositories/ProductRepository';
-import createProductRouter from './products/product.router.js';
 
-type Dependencies = {
-    productRepository: IProductRepository;
-}
+(async () => {
+   const server = new Server(envs.PORT, AppRouter.router)
+   server.start();
+})()
 
-export default function ({ productRepository }: Dependencies): express.Express {
-    const app = express();
-
-    app.disable('x-powered-by');
-    app.use(express.json());
-    app.use(cors());
-    app.use('/api/product', createProductRouter({ productRepository }));
-
-    return app;
-}
