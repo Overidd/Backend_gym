@@ -14,3 +14,13 @@ export const productSchema = z.object({
     createdAt: z.date(),
     updatedAt: z.date(),
 });
+
+export const publicProductSchema = productSchema.pick({
+    name: true,
+    description: true,
+    price: true,
+    stock: true,
+    isActive: true,
+});
+
+export const updateProductSchema = publicProductSchema.partial();
