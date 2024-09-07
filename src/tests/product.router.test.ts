@@ -2,14 +2,20 @@ import { test, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import request from "supertest";
 
-import createApp from "../app.js";
+import createApp from "./server.test";
 
 import { createProduct, mockProductRepository } from "./utils.js";
-import type { Product, PublicProduct } from "../products/product.types.js";
+import type { IProduct, CreateProduct } from "../products/product.DTOS.ts";
 
-const app = createApp({
-    productRepository: mockProductRepository,
-});
+import { Router } from "express";
+
+const router = Router()
+router.use('', mockProductRepository.create)
+router.use('', mockProductRepository.delete)
+router.use('', mockProductRepository.getAll)
+router.use('', mockProductRepository.getById)
+
+const app = createApp(router);
 
 const ENDPOINTS = Object.freeze({
     PRODUCT: "/api/product",
@@ -29,10 +35,10 @@ test("Obtener todos los productos (cuando no hay) devuelve un 404", async () => 
 
 test("Obtener todos los productos (cuando hay) devuelve un 200 y los productos", async () => {
     // Productos con precios 1, 2 y 3
-    const expectedProducts: Product[] = [1, 2, 3].map((price) => createProduct(price));
+    const expectedProducts: IProduct[] = [1, 2, 3].map((price) => createProduct(price));
 
-    const productsWithoutId: PublicProduct[] = expectedProducts.map((product) => ({...product}));
-    
+    const productsWithoutId: CreateProduct[] = expectedProducts.map((product) => ({ ...product }));
+
     for (const product of productsWithoutId) {
         const result = await mockProductRepository.create(product);
         assert.notEqual(result, null);
@@ -42,10 +48,8 @@ test("Obtener todos los productos (cuando hay) devuelve un 200 y los productos",
 
     // Las fechas de la respuesta vienen con tipo `string`, no `Date`
     // Pero vienen bien formateadas así que se pueden convertir y ya
-    const actualProducts = response.body.map((product: Product) => ({
+    const actualProducts = response.body.map((product: IProduct) => ({
         ...product,
-        createdAt: new Date(product.createdAt),
-        updatedAt: new Date(product.updatedAt),
     }));
 
     assert.strictEqual(response.statusCode, 200);
