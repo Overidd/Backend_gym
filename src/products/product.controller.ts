@@ -1,38 +1,147 @@
 import { IProductRepository } from "../interfaces/repositories/ProductRepository";
 import type { Request, Response } from 'express';
+import { ProductRepository } from "./productRepository";
+import { CreateProductDTO, UpdateProductDTO } from "./product.DTOS";
 
 export class ProductController {
-    private readonly productRepository: IProductRepository;
+    constructor(
+        private readonly productRepository: IProductRepository,
+    ) { }
 
-    constructor(productRepository: IProductRepository) {
-        this.productRepository = productRepository;
+    public getAllProducts = async (_req: Request, res: Response) => {
+        try {
+            const products = await this.productRepository.getAll();
+
+            res.status(200).json({
+                'message': 'get all products',
+                'data': products,
+            })
+
+        } catch (error) {
+            res.status(500).json({
+                'message': 'Error getting products',
+                'error': error
+            })
+        }
     }
 
-    getAll = async (req: Request, res: Response) => {
-        const products = await this.productRepository.getAll();
-        if (products.length === 0) {
-            res.status(404).send({ message: 'No se encontró ningún producto' });
-            return;
-        }
+    public getProductById = async (req: Request, res: Response) => {
+        try {
+            const productId = parseInt(req.params.id)
+            const product = await this.productRepository.getById(productId)
 
-        res.send(products);
+            res.status(200).json({
+                'message': 'get product by id',
+                'data': product
+            })
+        } catch (error) {
+            if (error instanceof ProductRepository) {
+                return res.status(404).json({
+                    'message': 'Product not found',
+                    'error': error
+                })
+            }
+
+            return res.status(500).json({
+                'message': 'Error getting product',
+                'error': error
+            })
+        }
+    }
+    public createProduct = async (req: Request, res: Response) => {
+        try {
+            const images = req.files as Express.Multer.File[];
+            const pathImages = images.map(file => file.path)
+
+            const [error, updateTodoDto] = CreateProductDTO.create(req.body, pathImages)
+
+            if (error) {
+                return res.status(400).json({
+                    'message': 'Error creating product',
+                    'error': error
+                })
+            }
+            const product = await this.productRepository.create(updateTodoDto!)
+
+            res.status(201).json({
+                'message': 'product created',
+                'data': product
+            })
+
+        } catch (error) {
+            if (error instanceof ProductRepository) {
+                return res.status(404).json({
+                    'message': 'Invalid product data',
+                    'error': error
+                })
+            }
+            return res.status(500).json({
+                'message': 'Error getting product',
+                'error': error
+            })
+        }
     }
 
-    getById = async (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
+    public updateProduct = async (req: Request, res: Response) => {
+        try {
+            const productId = parseInt(req.params.id)
+            const images = req.files as Express.Multer.File[];
+            const pathImages = images.map(file => file.path)
+            //? Mas adelante se deberia conectar en https://cloudinary.com/
 
-        if (isNaN(id)) {
-            res.status(400).send({ message: 'El id debe ser un número' });
-            return;
+
+            const [error, updateTodoDto] = UpdateProductDTO.update(req.body, pathImages)
+            if (error) {
+                return res.status(400).json({
+                    'message': 'Error updating product',
+                    'error': error
+                })
+            }
+
+            const product = await this.productRepository.update(productId, updateTodoDto!)
+
+            return res.status(200).json({
+                'message': 'product updated',
+                'data': product
+            })
+
+        } catch (error) {
+            if (error instanceof ProductRepository) {
+                return res.status(404).json({
+                    'message': 'Invalid product data',
+                    'error': error
+                })
+            }
+            return res.status(500).json({
+                'message': 'Error getting product',
+                'error': error
+            })
         }
+    }
 
-        const product = await this.productRepository.getById(id);
+    public deleteProduct = async (req: Request, res: Response) => {
+        try {
+            const productId = parseInt(req.params.id)
+            const result = await this.productRepository.delete(productId)
 
-        if (!product) {
-            res.status(404).send({ message: 'No se encontró ningún producto' });
-            return;
+            return res.status(200).json({
+                'message': 'Product deleted',
+                'data': result
+            })
+
+        } catch (error) {
+            if (error instanceof ProductRepository) {
+                return res.status(404).json({
+                    'message': 'Invalid product data',
+                    'error': error
+                })
+            }
+            return res.status(500).json({
+                'message': 'Error getting product',
+                'error': error
+            })
         }
-
-        res.send(product);
     }
 }
+
+
