@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { productSchema } from "../schemas/productSchema.js";
+import { productSchema } from "../products/product.schema.js";
 
 import { createProduct } from './utils.js';
 

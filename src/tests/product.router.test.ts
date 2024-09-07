@@ -5,7 +5,7 @@ import request from "supertest";
 import createApp from "../app.js";
 
 import { createProduct, mockProductRepository } from "./utils.js";
-import type { Product, ProductWithoutId } from "../types/productTypes.js";
+import type { Product, PublicProduct } from "../products/product.types.js";
 
 const app = createApp({
     productRepository: mockProductRepository,
@@ -28,12 +28,10 @@ test("Obtener todos los productos (cuando no hay) devuelve un 404", async () => 
 });
 
 test("Obtener todos los productos (cuando hay) devuelve un 200 y los productos", async () => {
-    const expectedProducts: Product[] = [1, 2, 3].map((price) => {
-        const product = createProduct(price);
-        product.id = 1;
-        return product;
-    })
-    const productsWithoutId: ProductWithoutId[] = expectedProducts.map((product) => ({...product}));
+    // Productos con precios 1, 2 y 3
+    const expectedProducts: Product[] = [1, 2, 3].map((price) => createProduct(price));
+
+    const productsWithoutId: PublicProduct[] = expectedProducts.map((product) => ({...product}));
     
     for (const product of productsWithoutId) {
         const result = await mockProductRepository.create(product);
@@ -59,7 +57,9 @@ test("Crear un producto e intentar obtenerlo por ID funca", async () => {
     const result = await mockProductRepository.create(product);
     assert.notEqual(result, null);
 
-    const response = await request(app).get(ENDPOINTS.GET_BY_ID.replace("{id}", result.id.toString())).send();
+    const endpoint = ENDPOINTS.GET_BY_ID.replace("{id}", result.id.toString())
+
+    const response = await request(app).get(endpoint).send();
     const productSent = {
         ...response.body,
         createdAt: new Date(response.body.createdAt),
