@@ -1,4 +1,4 @@
-import type { Product, ProductUpdate, ProductWithoutId } from "../types/productTypes";
+import type { Product, PublicProduct, UpdateProduct } from "../products/product.types";
 import type { IProductRepository } from "../interfaces/repositories/ProductRepository";
 
 
@@ -46,13 +46,17 @@ class MockProductRepository implements IProductRepository {
         return product || null;
     }
     
-    async create(product: ProductWithoutId): Promise<Product> {
-        const newProduct = { id: this.products.length + 1, ...product };
+    async create(product: PublicProduct): Promise<Product> {
+        const newProduct: Product = {
+            id: this.products.length + 1, ...product,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
         this.products.push(newProduct);
         return newProduct;
     }
 
-    async update(id: number, product: ProductUpdate): Promise<Product | null> {
+    async update(id: number, product: UpdateProduct): Promise<Product | null> {
         const index = this.products.findIndex((p) => p.id === id);
         if (index === -1) return null;
 

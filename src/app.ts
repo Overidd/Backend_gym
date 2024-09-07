@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 
 import { IProductRepository } from './interfaces/repositories/ProductRepository';
-import createProductRouter from './routers/productRouter.js';
+import createProductRouter from './products/product.router.js';
 
 type Dependencies = {
     productRepository: IProductRepository;
