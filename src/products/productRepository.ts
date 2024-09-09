@@ -2,24 +2,27 @@ import { prisma } from "../data/postgres";
 import { IProductRepository } from "../interfaces/repositories";
 import { IProduct, CreateProductDTO, UpdateProductDTO } from ".";
 
-export class ProductRepository implements IProductRepository {
-   async getAll(): Promise<IProduct[]> {
 
+export class ProductRepository implements IProductRepository {
+   async getAll(skitp: number, pagesize: number): Promise<IProduct[]> {
       // se Obtiene todo la informacion de la tabla product
       const products = await prisma.product.findMany({
+         skip: skitp,
+         take: pagesize,
          where: { isActive: true },
          include: {
             product_image: {
-               select:{
+               select: {
                   id: true,
                   image: true
                }
             },
          },
-         orderBy: { createdAt: "asc" },
-         // take: 10,
+         orderBy: { id: 'asc' },
+
       });
       return products
+
    }
    async getById(id: number): Promise<IProduct | null> {
 
@@ -31,20 +34,20 @@ export class ProductRepository implements IProductRepository {
             product_image: true,
          }
       });
-      
+
       // Si el producto no está activo, se lanza una excepción
       if (product?.isActive === false) throw 'Producto desactivado';
-      
+
       // Si no se encuentra el producto, se lanza una excepción
       if (!product) throw 'Producto no encontrado';
 
       return product
    }
    async create(product: CreateProductDTO): Promise<IProduct> {
-      
+
       //El método $transaction() en Prisma permite agrupar varias operaciones de la base de datos. Esto es útil cuando necesitas realizar varias operaciones relacionadas, y de asegurarte de que todas se completen correctamente, si ocurre alguna falla, se revertir todos los datos, de esa forma nos aseguramos de no guardar data basura.
       const createdProduct = await prisma.$transaction(async (prisma) => {
-         
+
          // Crea el producto un producto
          const newProduct = await prisma.product.create({
             data: {
@@ -114,20 +117,28 @@ export class ProductRepository implements IProductRepository {
       }
       return updatedProduct;
    }
-   async delete(id: number): Promise<boolean> {
-      await this.getById(id)
+   async isActiveProduct(id: number): Promise<boolean> {
+
+      const isActiveProduct = await prisma.product.findUnique({
+         where: { id }
+      });
+      if (!isActiveProduct) {
+         throw 'No existe el producto'
+      }
 
       const updatedProduct = await prisma.product.update({
          where: { id },
          data: {
-            isActive: false,
+            isActive: !isActiveProduct?.isActive,
          },
-      });
+      })
 
       if (!updatedProduct) {
          throw 'Error al eliminar el producto'
       }
-      return true
+      if (updatedProduct.isActive === true) return true;
+      return false
+
    }
 
 }
