@@ -2,7 +2,7 @@ import express, { Router } from 'express';
 import cors from 'cors';
 
 import swaggerUI from 'swagger-ui-express'
-import { swaggerSpec } from './config';
+import { swaggerSpec } from '../config';
 
 export class Server {
    public readonly app = express();
