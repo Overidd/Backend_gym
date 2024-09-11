@@ -1,11 +1,10 @@
 {
   "name": "backend_gimnasio",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/app.ts",
-    "build": "rimraf ./dist && tsc",
-    "start": "node dist/index.js",
+    "dev": "ts-node-dev src/servers/prod-server.ts",
+    "build": "rimraf ./build && tsc",
+    "start": "node build/servers/prod-server.js",
     "test": "node --test",
     "build:test": "npm run build && npm run test"
   },
