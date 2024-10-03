@@ -35,6 +35,26 @@ export class ProductRouter {
          *     description: Retorna una lista de productos activos.
          *     tags:
          *       - Product
+         *     parameters:
+         *       - in: query
+         *         name: page
+         *         schema:
+         *           type: integer
+         *           example: 2
+         *         description: Número de página a solicitar. Por defecto es 1.
+         *       - in: query
+         *         name: pagesize
+         *         schema:
+         *           type: integer
+         *           example: 4
+         *         description: Cantidad de productos por página. Por defecto es 10.
+         *       - in: query
+         *         name: order
+         *         schema:
+         *           type: string
+         *           enum: [asc, desc]
+         *           example: asc   
+         *         description: Orden de los productos, puede ser ascendente (asc) o descendente (desc). Por defecto es asc.
          *     responses:
          *       200:
          *         description: Lista de productos obtenida correctamente
@@ -276,7 +296,7 @@ export class ProductRouter {
 
         /**
          * @swagger
-         * /api/v1/product/delete/{id}:
+         * /api/v1/isactive/delete/{id}:
          *   delete:
          *     summary: Desactiva un producto existente
          *     description: Desactiva un producto cambiando el campo `isActive` a `false`. No elimina físicamente el producto de la base de datos.
@@ -300,7 +320,7 @@ export class ProductRouter {
          *               properties:
          *                 message:
          *                   type: string
-         *                   example: "Product updated successfully"
+         *                   example: "Producto desactivado correctamente"
          *                 data:
          *                   type: object
          *                   example: true
@@ -310,7 +330,7 @@ export class ProductRouter {
          *         description: Error interno del servidor
          */
 
-        router.delete('/delete/:id', controller.deleteProduct);
+        router.delete('/isactive/:id', controller.isActiveProduct);
 
         return router;
     }

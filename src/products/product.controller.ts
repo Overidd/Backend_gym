@@ -1,19 +1,44 @@
 import { IProductRepository } from "../interfaces/repositories/ProductRepository";
-import {ProductRepository,CreateProductDTO,UpdateProductDTO} from '.';
+import { ProductRepository, CreateProductDTO, UpdateProductDTO } from '.';
 import type { Request, Response } from 'express';
+
+
+type queryString = {
+    page?: string;
+    pagesize?: string;
+    order?: 'asc' | 'desc';
+}
 
 export class ProductController {
     constructor(
         private readonly productRepository: IProductRepository,
     ) { }
 
-    public getAllProducts = async (_req: Request, res: Response) => {
+    public getAllProducts = async (req: Request, res: Response) => {
+        // Paginacion 
+        let { page = '1', pagesize = '10', order = 'asc' }: queryString = req.query;
+
+        if (order != 'desc') {
+            order = 'asc'
+        }
+
+        const skitp: number = (parseInt(page) - 1) * parseInt(pagesize)
+
         try {
-            const products = await this.productRepository.getAll();
+            const products = await this.productRepository.getAll(skitp, parseInt(pagesize));
+
+            const newProductsOrder = products.sort((a, b) => {
+                if (order === 'asc') {
+                    return a.price - b.price;
+                } else {
+                    return b.price - a.price;
+                }
+            });
+
 
             res.status(200).json({
                 'message': 'get all products',
-                'data': products,
+                'data': newProductsOrder,
             })
 
         } catch (error) {
@@ -118,13 +143,21 @@ export class ProductController {
         }
     }
 
-    public deleteProduct = async (req: Request, res: Response) => {
+    public isActiveProduct = async (req: Request, res: Response) => {
         try {
             const productId = parseInt(req.params.id)
-            const result = await this.productRepository.delete(productId)
+            const result = await this.productRepository.isActiveProduct(productId)
+
+            let message = ''
+
+            if (result === true) {
+                message = 'Producto activado'
+            } else {
+                message = 'Producto desactivado'
+            }
 
             return res.status(200).json({
-                'message': 'Product deleted',
+                'message': message,
                 'data': result
             })
 
