@@ -1,4 +1,4 @@
-import type { IProduct as Product, CreateProduct as PublicProduct, UpdateProduct } from "../products/product.DTOS";
+import type { CreateProduct, IProduct as Product, UpdateProduct } from "../products/product.DTOS";
 import type { IProductRepository } from "../interfaces/repositories/ProductRepository";
 
 
@@ -6,22 +6,19 @@ import type { IProductRepository } from "../interfaces/repositories/ProductRepos
 Ya que la mayoría de valores no tienen pérdida, voy a crear una función
 para crear objetos donde sólo los valores tricky sean los probados
 */
-function createProduct(price: number): Product {
+function createProduct(price: number): CreateProduct {
     return {
-        id: 1,
         name: "Product",
         description: "Description",
         price,
         stock: 1,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
     };
 }
 
 /*
 También va a ser más fácil crear un repositorio de prueba así
-que a fuerza de mocks
+que a fuerza de mocks (o a lo mejor no)
 */
 class MockProductRepository implements IProductRepository {
     private readonly products: Product[] = [];
@@ -46,12 +43,13 @@ class MockProductRepository implements IProductRepository {
         return product || null;
     }
     
-    async create(product: PublicProduct): Promise<Product> {
+    async create(product: CreateProduct): Promise<Product> {
         const newProduct: Product = {
-            id: this.products.length + 1, ...product,
+            id: this.products.length + 1,
+            ...product,
             createdAt: new Date(),
             updatedAt: new Date(),
-            isActive: false,
+            isActive: true,
         };
         this.products.push(newProduct);
         return newProduct;

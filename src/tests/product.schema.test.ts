@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { productSchema } from "../products/product.schema.js";
+import { publicProductSchema } from "../products/product.schema.js";
 
 import { createProduct } from './utils.js';
 
@@ -13,8 +13,8 @@ const invalidPrices = [-1, -10, -1.1, -4.2, 4.999, 5.3214];
 for (const price of validPrices) {
     test(`Un producto con precio ${price} es válido`, () => {
         const product = createProduct(price);
-        const result = productSchema.safeParse(product);
-        assert.strictEqual(result.success, true);
+        const result = publicProductSchema.safeParse(product);
+        assert.strictEqual(result.success, true, result.error);
         assert.deepStrictEqual(result.data, product);
     });
 }
@@ -23,7 +23,7 @@ for (const price of validPrices) {
 for (const price of invalidPrices) {
     test(`Un producto con precio ${price} no es válido`, () => {
         const product = createProduct(price);
-        const result = productSchema.safeParse(product);
+        const result = publicProductSchema.safeParse(product);
         assert.strictEqual(result.success, false);
     });
 }

@@ -4,7 +4,7 @@ import z from 'zod';
 const priceVal = z.number({
     required_error: '[price] es requerido',
     invalid_type_error: '[price] debe ser un número decimal con hasta dos decimales',
-}).min(0).refine(val => Math.floor(val * 100) === val * 100, {
+}).min(0).multipleOf(0.01, {
     message: "El precio debe tener hasta dos decimales."
 });
 

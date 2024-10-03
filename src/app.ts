@@ -1,4 +1,4 @@
-import { Server } from './server';
+import { Server } from './servers/prod-server';
 import { AppRouter } from './app.router';
 import { envs } from './config';
 

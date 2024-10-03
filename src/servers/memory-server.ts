@@ -1,6 +1,6 @@
-import createApp from './server.test';
+import createApp from '../tests/app.js';
 
-import { mockProductRepository } from './utils.js';
+import { mockProductRepository } from '../tests/utils.js';
 
 
 import { ProductRouter } from '../products/product.router.js';
