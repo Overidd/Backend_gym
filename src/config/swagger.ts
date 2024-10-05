@@ -14,7 +14,11 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: `http://localhost:${envs.PORT}`,
+      url: `${envs.server_url}`,
+      description: 'Production server',
+    },
+    {
+      url: `http://localhost:${envs.PORT}`, 
       description: 'Local server',
     },
   ],
