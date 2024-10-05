@@ -10,6 +10,8 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
+    "skipLibCheck": true,
+    "allowJs": true,
     "outDir": "./dist"
   },
   "include": ["src/**/*.ts"],
