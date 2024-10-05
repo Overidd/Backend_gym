@@ -10,8 +10,8 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "strict": true,
-    "outDir": "./build"
+    "outDir": "./dist"
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "build"]
+  "exclude": ["node_modules", "dist"]
 }

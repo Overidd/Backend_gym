@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "ts-node-dev src/app.ts",
-    "build": "rimraf ./build && tsc",
-    "start": "node build/app.js",
+    "build": "rimraf ./dist && tsc",
+    "start": "node dist/app.js",
     "test": "node --test",
-    "build:test": "npm run build && npm run test"
+    "build:test": "npm run dist && npm run test"
   },
   "keywords": [],
   "author": "",
