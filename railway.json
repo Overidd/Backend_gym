@@ -1,5 +1,10 @@
 {
-   "build": "npm install && npm run build",
-   "start": "npm start"
+   "build": {
+     "command": "npm install && npm run build",
+     "cwd": "./" 
+   },
+   "start": {
+     "command": "node dist/index.js"
+   }
  }
  
