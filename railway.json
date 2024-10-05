@@ -4,7 +4,7 @@
      "cwd": "./" 
    },
    "start": {
-     "command": "node dist/index.js"
+     "command": "node dist/app.js"
    }
  }
  
