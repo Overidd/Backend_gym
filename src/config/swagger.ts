@@ -1,27 +1,28 @@
-import swaggerJSDoc from "swagger-jsdoc";
+import swaggerJSDoc from 'swagger-jsdoc';
+import {envs} from './envs';
 
 const swaggerDefinition = {
-  openapi: "3.0.0",
+  openapi: '3.0.0',
   info: {
-    title: "Swagger API",
-    version: "1.0.0",
-    description: "",
+    title: 'Swagger API',
+    version: '1.0.0',
+    description: '',
     contact: {
-      name: ": Jhon Elvis",
-      email: "correo@example.com",
+      name: ': Jhon Elvis',
+      email: 'correo@example.com',
     }
   },
   servers: [
     {
-      url: "http://localhost:3000",
-      description: "Local server",
+      url: `http://localhost:${envs.PORT}`,
+      description: 'Local server',
     },
   ],
 };
 
 const options = {
   swaggerDefinition,
-  apis: ["./src/products/product.router.ts"],
+  apis: ['./src/products/product.router.ts', './src/trainer/trainer.router.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

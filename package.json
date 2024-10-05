@@ -2,7 +2,7 @@
   "name": "backend_gimnasio",
   "version": "1.0.0",
   "scripts": {
-    "dev": "ts-node-dev src/servers/prod-server.ts",
+    "dev": "ts-node-dev src/app.ts",
     "build": "rimraf ./build && tsc",
     "start": "node build/servers/prod-server.js",
     "test": "node --test",
@@ -14,6 +14,7 @@
   "description": "",
   "dependencies": {
     "@prisma/client": "^5.19.1",
+    "cloudinary": "^2.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "env-var": "^7.5.0",
