@@ -26,6 +26,9 @@ class MockProductRepository implements IProductRepository {
     constructor() {
         this.products = [];
     }
+    isActiveProduct(_id: number): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     
     /**
      * Este método sólo está en el repositorio para pruebas
