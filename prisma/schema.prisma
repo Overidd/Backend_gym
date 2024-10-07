@@ -14,8 +14,8 @@ model Product {
   price         Float
   stock         Int            @default(1)
   isActive      Boolean        @default(true)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   product_image ProductImage[]
 }
 
@@ -35,7 +35,7 @@ model Trainer {
   specialization String
   image          String   @db.Text
   description    String?
-  isActive       Boolean @default(true)
+  isActive       Boolean  @default(true)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 }
@@ -49,7 +49,7 @@ model Local {
   phone         String
   opening_start DateTime       @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
   opening_end   DateTime       @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
-  isActivate    Boolean       @default(true)
+  isActivate    Boolean        @default(true)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   local_images  LocalImages[] // uno a muchos
