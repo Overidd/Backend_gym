@@ -12,8 +12,8 @@ export interface IProduct {
    price: number;
    stock: number;
    isActive: boolean;
-   createdAt: Date | undefined;
-   updatedAt: Date | undefined;
+   created_at: Date | undefined;
+   updated_at: Date | undefined;
    image?: string[] | undefined;
 }
 

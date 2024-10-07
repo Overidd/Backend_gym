@@ -11,12 +11,12 @@ export interface ITrainer {
    first_name: string,
    last_name: string,
    email: string,
-   phone: string,
+   phone: string | null | undefined,
    specialization: string,
-   description: string,
+   description: string | null | undefined,
    isActive: boolean,
-   createdAt: Date | undefined,
-   updatedAt: Date | undefined,
+   created_at: Date,
+   updated_at: Date,
    image: string | undefined,
 }
 

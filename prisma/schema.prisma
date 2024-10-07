@@ -14,7 +14,7 @@ model Product {
   price         Float
   stock         Int            @default(1)
   isActive      Boolean        @default(true)
-  created_At    DateTime       @default(now())
+  created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   product_image ProductImage[]
 }
@@ -35,7 +35,7 @@ model Trainer {
   specialization String
   image          String   @db.Text
   description    String?
-  isActive       Boolean? @default(true)
+  isActive       Boolean @default(true)
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 }
@@ -54,7 +54,7 @@ model Local {
   updated_at    DateTime       @updatedAt
   local_images  LocalImages[] // uno a muchos
   class         LocalClass[] // muchos a muchos
-  services      LocalService[]
+  services      LocalService[] // muchos a muchos
 }
 
 model LocalImages {
