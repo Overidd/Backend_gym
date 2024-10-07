@@ -25,7 +25,7 @@ export const trainerSchema = z.object({
    specialization: z.string({
       required_error: '[specialization] es requerido',
       invalid_type_error: '[specialization] debe ser una cadena',
-   }).max(255).optional(),
+   }).max(255),
    description: z.string({
       invalid_type_error: '[description] debe ser una cadena',
    }).max(500).optional(),

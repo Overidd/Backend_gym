@@ -13,10 +13,10 @@ export interface ITrainer {
    email: string,
    phone: string,
    specialization: string,
-   description: string,
+   description: string | null | undefined,
    isActive: boolean,
-   createdAt: Date | undefined,
-   updatedAt: Date | undefined,
+   createdAt: Date,
+   updatedAt: Date,
    image: string | undefined,
 }
 

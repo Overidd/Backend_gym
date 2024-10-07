@@ -40,7 +40,7 @@ model trainer {
   phone          String
   specialization String
   image          String   @db.Text
-  description    String
+  description    String?
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
