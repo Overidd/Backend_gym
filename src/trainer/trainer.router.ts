@@ -70,11 +70,11 @@ export class TrainerRouter {
       *               phone:
       *                 type: number
       *                 example: 123456789
-      *                 description: Telefono del trainer (opcional)
+      *                 description: Telefono del trainer
       *               specialization:
       *                 type: string
       *                 example: ""
-      *                 description: Especialización del trainer (opcional)
+      *                 description: Especialización del trainer
       *               image:
       *                 type: string
       *                 format: binary
