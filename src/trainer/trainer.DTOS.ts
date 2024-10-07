@@ -21,7 +21,7 @@ export interface ITrainer {
 }
 
 const parseInput = (props: any) => {
-   if (typeof props.isActive === 'string') {
+   if (typeof props?.isActive === 'string') {
       props.isActive = JSON.parse(props.isActive)
    };
    return props;
