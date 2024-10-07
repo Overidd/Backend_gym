@@ -2,17 +2,55 @@ import z from 'zod';
 import { createLocalSchema, updateLocalSchema } from '.'
 import { BadRequestException } from '../utils';
 
+//* -----------LOCAL INTERFACES--------------
 type ICreateLocalSchema = z.infer<typeof createLocalSchema>
 type IUpdateLocalSchema = z.infer<typeof updateLocalSchema>
 
-export interface Ilocal extends ICreateLocalSchema {
-   images?: string[],
+export interface IlocalById {
+   id: number;
+   name: string;
+   description: string;
+   address: string;
+   phone: string;
+   opening_start: string;
+   opening_end: string;
+   isActivate: boolean;
    created_at: Date,
    updated_at: Date,
+
+   class_id: {
+      id: number,
+      name: string
+   }[];
+
+   services_id: {
+      id: number,
+      name: string
+   }[];
+
+   images: {
+      id: number,
+      image: string,
+      default: boolean,
+   }[],
 }
 
-const localInput = (props: any) => {
+export interface IlocalAll {
+   id: number;
+   name: string;
+   description: string;
+   address: string;
+   phone: string;
+   opening_start: string;
+   opening_end: string;
+   isActivate: boolean;
+   created_at: Date,
+   updated_at: Date,
+   image: string,
+}
 
+//*--------------DTO----------------
+const localInput = (props: any) => {
    if (typeof props?.opening_start === 'string') {
       props.opening_start = new Date(props.opening_start)
    };
@@ -46,7 +84,6 @@ export class LocalDTO {
    ) { }
 
    static create(props: ICreateLocalSchema, images?: string[]): LocalDTO {
-
       try {
          const parsedProps = localInput(props);
 
@@ -69,11 +106,11 @@ export class LocalDTO {
    static update(props: IUpdateLocalSchema, images?: string[]): LocalDTO {
       try {
          const parsedProps = localInput(props);
-         
+
          const validatedProps = updateLocalSchema.parse(parsedProps);
-         
+
          const validatedImages = images?.length ? images : undefined;
-         
+
          const {
             name, description, address, phone, opening_start, opening_end, isActivate, class_id, services_id
          } = validatedProps
