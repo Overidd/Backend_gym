@@ -6,7 +6,7 @@
     "build": "rimraf ./dist && tsc",
     "start": "node dist/app.js",
     "test": "node --test",
-    "build:test": "npm run dist && npm run test"
+    "build:test": "npm run build && npm run test"
   },
   "keywords": [],
   "author": "",
