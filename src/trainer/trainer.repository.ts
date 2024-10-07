@@ -49,6 +49,7 @@ export class TrainerRepository implements ITrainerRepository {
          return newTrainer
 
       } catch (error) {
+         console.log(error);
          throw new BadRequestException('Entrenador ya existente');
       }
 
