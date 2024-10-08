@@ -29,13 +29,13 @@ export const localSchema = z.object({
       required_error: '[opening_start] es requerido',
       invalid_type_error: '[opening_start] debe ser una cadena',
    }).time({
-      message: '[opening_start] debe ser una hora',
+      message: '[opening_start] debe ser una hora con el formato HH:mm:ss'
    }),
    opening_end: z.string({
       required_error: '[opening_end] es requerido',
       invalid_type_error: '[opening_end] debe ser una cadena',
    }).time({
-      message: '[opening_end] debe ser una hora',
+      message: '[opening_end] debe ser una hora con el formato HH:mm:ss' 
    }),
    isActivate: z.boolean({
       required_error: '[isActivate] es requerido',

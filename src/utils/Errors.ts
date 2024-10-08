@@ -34,3 +34,10 @@ export class UnauthorizedException extends Error {
       this.statusCode = 401;
    }
 }
+
+export class ErrorDate extends Error {
+   constructor(message:string) {
+       super(message);
+       this.name = "ErrorDate";
+   }
+}
