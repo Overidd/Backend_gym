@@ -21,17 +21,17 @@ export const trainerSchema = z.object({
       invalid_type_error: '[phone] debe ser un número',
    }).max(10, {
       message: '[phone] debe tener como maximo 10 dígitos',
-   }).optional(),
+   }),
    specialization: z.string({
       required_error: '[specialization] es requerido',
       invalid_type_error: '[specialization] debe ser una cadena',
-   }).max(255).optional(),
+   }).max(255),
    description: z.string({
       invalid_type_error: '[description] debe ser una cadena',
    }).max(500).optional(),
    isActive: z.boolean({
       invalid_type_error: '[isActive] debe ser booleano',
-   }).default(true).optional(),
+   }).default(true),
 })
 
 export const createTrainerSchema = trainerSchema.pick({

@@ -12,7 +12,7 @@ export interface ITrainer {
    first_name: string,
    last_name: string,
    email: string,
-   phone: string | null | undefined,
+   phone: string,
    specialization: string,
    description: string | null | undefined,
    isActive: boolean,
