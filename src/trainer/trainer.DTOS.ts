@@ -8,6 +8,7 @@ export type UpdateProduct = z.infer<typeof updateTrainerSchema>;
 
 //* Formato de la respuesta del trainer
 export interface ITrainer {
+   id: number,
    first_name: string,
    last_name: string,
    email: string,
