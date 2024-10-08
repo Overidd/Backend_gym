@@ -31,8 +31,8 @@ model Trainer {
   first_name     String
   last_name      String
   email          String   @unique
-  phone          String?
-  specialization String?
+  phone          String
+  specialization String
   image          String   @db.Text
   description    String?
   isActive       Boolean  @default(true)
@@ -87,6 +87,7 @@ model LocalService {
 model ClassGym {
   id          Int          @id @default(autoincrement())
   name        String
+  icon        String       @db.Text
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   local_class LocalClass[]
@@ -95,6 +96,7 @@ model ClassGym {
 model ServiceGym {
   id            Int            @id @default(autoincrement())
   name          String
+  icon          String         @db.Text
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   local_service LocalService[]
