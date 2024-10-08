@@ -19,13 +19,19 @@ export const trainerSchema = z.object({
    phone: z.string({
       required_error: '[phone] es requerido',
       invalid_type_error: '[phone] debe ser un número',
+   }).min(6,{
+      message: '[phone] debe tener como minimo 6 dígitos',
    }).max(10, {
       message: '[phone] debe tener como maximo 10 dígitos',
    }),
    specialization: z.string({
       required_error: '[specialization] es requerido',
       invalid_type_error: '[specialization] debe ser una cadena',
-   }).max(255),
+   }).min(5, {
+      message: '[specialization] debe tener como minimo 5 caracteres',
+   }).max(255, {
+      message: '[specialization] debe tener como maximo 255 caracteres',
+   }),
    description: z.string({
       invalid_type_error: '[description] debe ser una cadena',
    }).max(500).optional(),
