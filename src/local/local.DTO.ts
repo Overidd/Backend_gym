@@ -65,6 +65,17 @@ export interface IlocalGeneric {
    isActivate: boolean;
    created_at: Date,
    updated_at: Date,
+   clases?:{
+      count: number,
+   };
+
+   services?: {
+      count: number,
+   };
+
+   images?: {
+      count: number,
+   },
 }
 
 export interface IlocalImages {
@@ -170,12 +181,8 @@ export class UpdateLocalDTO {
       public readonly opening_end?: Date,
       public readonly isActivate?: boolean,
       public readonly images?: string[],
-      public readonly images_id_delete?: number[],
-      public readonly image_id_default?: number,
       public readonly class_id?: number[],
-      public readonly class_id_delete?: number[],
       public readonly services_id?: number[],
-      public readonly services_id_delete?: number[],
    ) { }
 
    static update(props: IUpdateLocalSchema, images?: string[]): UpdateLocalDTO {
@@ -190,7 +197,8 @@ export class UpdateLocalDTO {
          // Validar fechas
          const { date_start, date_end } = validateDate(opening_start, opening_end, false);
 
-         return new UpdateLocalDTO(name, description, address, phone, date_start, date_end, isActivate, validatedImages, class_id);
+         return new UpdateLocalDTO(name, description, address, phone, date_start, date_end, isActivate, validatedImages, class_id, services_id);
+
       } catch (error) {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
