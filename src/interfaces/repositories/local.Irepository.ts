@@ -1,15 +1,16 @@
-import { IlocalAll, IlocalById, IlocalGeneric, LocalDTO } from '../../local'
+import { IlocalAll, IlocalById, IlocalGeneric, CreateLocalDTO, UpdateLocalDTO, IlocalImages } from '../../local'
 
 export interface ILocalRepository {
-   getAll(services: string[], classes: string[], search: string, page: number, page_size: number): Promise<IlocalAll>;
-
-   getById(id: string): Promise<IlocalById>;
-
-   createLocal(data: LocalDTO): Promise<IlocalGeneric>;
-
-   update(id: string, data: LocalDTO): Promise<IlocalGeneric>;
-
-   delete(id: string): Promise<boolean>;
+   getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<IlocalAll>;
+   getById(id: number): Promise<IlocalById>;
+   create(data: CreateLocalDTO): Promise<IlocalGeneric>;
+   update(id: number, data: UpdateLocalDTO): Promise<IlocalGeneric>;
+   updateImageDefault(id: number, image_id_default: number): Promise<boolean>;
+   deleteService(id: number, service_id: number): Promise<boolean>;
+   deleteClases(id: number, class_id: number): Promise<boolean>;
+   deleteImage(id: number, image_id: number): Promise<IlocalImages>;
+   isActivate(id: number): Promise<boolean>;
+   delete(id: number): Promise<boolean>;
 }
 
 

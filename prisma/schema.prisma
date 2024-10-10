@@ -23,7 +23,7 @@ model ProductImage {
   id         Int     @id @default(autoincrement())
   image      String  @db.Text
   product_id Int
-  product    Product @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model Trainer {
@@ -36,8 +36,8 @@ model Trainer {
   image          String   @db.Text
   description    String?
   isActive       Boolean  @default(true)
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 //*----------
@@ -52,8 +52,8 @@ model Local {
   isActivate    Boolean        @default(true)
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
-  local_images  LocalImages[] // uno a muchos
-  class         LocalClass[] // muchos a muchos
+  images        LocalImages[] // uno a muchos
+  clases        LocalClass[] // muchos a muchos
   services      LocalService[] // muchos a muchos
 }
 
@@ -62,25 +62,23 @@ model LocalImages {
   image    String  @db.Text
   default  Boolean @default(false)
   local_id Int
-  local    Local   @relation(fields: [local_id], references: [id])
+  local    Local   @relation(fields: [local_id], references: [id], onDelete: Cascade)
 }
 
 model LocalClass {
   id       Int      @id @default(autoincrement())
-  name     String
   local_id Int
-  local    Local    @relation(fields: [local_id], references: [id])
+  local    Local    @relation(fields: [local_id], references: [id], onDelete: Cascade)
   class_id Int
-  class    ClassGym @relation(fields: [class_id], references: [id])
+  class    ClassGym @relation(fields: [class_id], references: [id], onDelete: Cascade)
 }
 
 model LocalService {
   id         Int        @id @default(autoincrement())
-  name       String
   local_id   Int
-  local      Local      @relation(fields: [local_id], references: [id])
+  local      Local      @relation(fields: [local_id], references: [id], onDelete: Cascade)
   service_id Int
-  service    ServiceGym @relation(fields: [service_id], references: [id])
+  service    ServiceGym @relation(fields: [service_id], references: [id], onDelete: Cascade)
 }
 
 // -------------

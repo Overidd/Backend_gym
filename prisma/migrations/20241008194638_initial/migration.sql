@@ -1,27 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `local` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `product` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `product_image` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `trainer` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropForeignKey
-ALTER TABLE "product_image" DROP CONSTRAINT "product_image_product_id_fkey";
-
--- DropTable
-DROP TABLE "local";
-
--- DropTable
-DROP TABLE "product";
-
--- DropTable
-DROP TABLE "product_image";
-
--- DropTable
-DROP TABLE "trainer";
-
 -- CreateTable
 CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
@@ -30,8 +6,8 @@ CREATE TABLE "Product" (
     "price" DOUBLE PRECISION NOT NULL,
     "stock" INTEGER NOT NULL DEFAULT 1,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "created_At" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Product_pkey" PRIMARY KEY ("id")
 );
@@ -51,13 +27,13 @@ CREATE TABLE "Trainer" (
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "phone" TEXT,
+    "phone" TEXT NOT NULL,
     "specialization" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "description" TEXT,
-    "isActive" BOOLEAN DEFAULT true,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Trainer_pkey" PRIMARY KEY ("id")
 );
@@ -71,7 +47,7 @@ CREATE TABLE "Local" (
     "phone" TEXT NOT NULL,
     "opening_start" TIME NOT NULL,
     "opening_end" TIME NOT NULL,
-    "isActivate" BOOLEAN DEFAULT true,
+    "isActivate" BOOLEAN NOT NULL DEFAULT true,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -112,6 +88,7 @@ CREATE TABLE "LocalService" (
 CREATE TABLE "ClassGym" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -122,6 +99,7 @@ CREATE TABLE "ClassGym" (
 CREATE TABLE "ServiceGym" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "icon" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -132,19 +110,19 @@ CREATE TABLE "ServiceGym" (
 CREATE UNIQUE INDEX "Trainer_email_key" ON "Trainer"("email");
 
 -- AddForeignKey
-ALTER TABLE "ProductImage" ADD CONSTRAINT "ProductImage_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductImage" ADD CONSTRAINT "ProductImage_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LocalImages" ADD CONSTRAINT "LocalImages_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocalImages" ADD CONSTRAINT "LocalImages_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LocalClass" ADD CONSTRAINT "LocalClass_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocalClass" ADD CONSTRAINT "LocalClass_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LocalClass" ADD CONSTRAINT "LocalClass_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "ClassGym"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocalClass" ADD CONSTRAINT "LocalClass_class_id_fkey" FOREIGN KEY ("class_id") REFERENCES "ClassGym"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LocalService" ADD CONSTRAINT "LocalService_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocalService" ADD CONSTRAINT "LocalService_local_id_fkey" FOREIGN KEY ("local_id") REFERENCES "Local"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LocalService" ADD CONSTRAINT "LocalService_service_id_fkey" FOREIGN KEY ("service_id") REFERENCES "ServiceGym"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "LocalService" ADD CONSTRAINT "LocalService_service_id_fkey" FOREIGN KEY ("service_id") REFERENCES "ServiceGym"("id") ON DELETE CASCADE ON UPDATE CASCADE;

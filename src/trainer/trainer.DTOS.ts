@@ -16,17 +16,15 @@ export interface ITrainer {
    specialization: string,
    description: string | null | undefined,
    isActive: boolean,
-   created_at: Date,
-   updated_at: Date,
+   createdAt: Date,
+   updatedAt: Date,
    image: string | undefined,
 }
 
 const parseInput = (props: any) => {
-   console.log(props, "1");
    if (typeof props?.isActive === 'string') {
       props.isActive = JSON.parse(props.isActive)
    };
-   console.log(props, "2");
    return props;
 }
 

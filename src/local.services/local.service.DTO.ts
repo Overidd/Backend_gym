@@ -2,7 +2,7 @@ import z from 'zod';
 import { createlocalServiceSchema, updatelocalServiceSchema } from '.'
 import { BadRequestException } from '../utils';
 
-//* -----------LOCAL INTERFACES--------------
+//* --------LOCAL INTERFACES--------
 type ICreateLocalServiceSchema = z.infer<typeof createlocalServiceSchema>
 type IUpdateLocalServiceSchema = z.infer<typeof updatelocalServiceSchema>
 
@@ -13,23 +13,14 @@ export interface IServices {
    created_at: string,
    updated_at: string
 }
-
-export interface IClases {
-   id: number;
-   name: string;
-   icon: string;
-   created_at: string,
-   updated_at: string
-}
-
 //*--------------DTO----------------
-export class ClassServiceDTO {
+export class LocalServiceDTO {
    constructor(
       public readonly name?: string,
       public readonly icon?: string
    ) { }
 
-   static create(props: ICreateLocalServiceSchema, icon?: string): ClassServiceDTO {
+   static create(props: ICreateLocalServiceSchema, icon?: string): LocalServiceDTO {
       try {
          const validatedProps = createlocalServiceSchema.parse(props);
 
@@ -37,7 +28,7 @@ export class ClassServiceDTO {
 
          const { name } = validatedProps;
 
-         return new ClassServiceDTO(name, iconImage)
+         return new LocalServiceDTO(name, iconImage)
 
       } catch (error) {
          if (error instanceof z.ZodError) {
@@ -47,7 +38,7 @@ export class ClassServiceDTO {
       }
    }
 
-   static update(props: IUpdateLocalServiceSchema, icon?: string): ClassServiceDTO {
+   static update(props: IUpdateLocalServiceSchema, icon?: string): LocalServiceDTO {
       try {
          const validatedProps = updatelocalServiceSchema.parse(props);
 
@@ -55,7 +46,7 @@ export class ClassServiceDTO {
 
          const { name } = validatedProps
 
-         return new ClassServiceDTO(name, validatedIcon)
+         return new LocalServiceDTO(name, validatedIcon)
 
       } catch (error) {
          if (error instanceof z.ZodError) {
