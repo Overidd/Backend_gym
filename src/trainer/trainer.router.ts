@@ -74,7 +74,7 @@ export class TrainerRouter {
       *               specialization:
       *                 type: string
       *                 example: ""
-      *                 description: Especialización del trainer
+      *                 description: Especialización del trainer 
       *               image:
       *                 type: string
       *                 format: binary
