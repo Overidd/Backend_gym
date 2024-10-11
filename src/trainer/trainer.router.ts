@@ -2,8 +2,8 @@ import { Router } from 'express';
 import multer from 'multer';
 import { TrainerController, TrainerRepository } from '.';
 
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
+const storageFile = multer.memoryStorage();
+const upload = multer({ storage: storageFile });
 
 export class TrainerRouter {
 
