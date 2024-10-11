@@ -10,40 +10,35 @@ export interface IServices {
    id: number;
    name: string;
    icon: string;
-   created_at: string,
-   updated_at: string
+   created_at: Date,
+   updated_at: Date
 }
 //*--------------DTO----------------
 export class LocalServiceDTO {
    constructor(
       public readonly name?: string,
-      public readonly icon?: string
+      public icon?: string
    ) { }
 
    static create(props: ICreateLocalServiceSchema, icon?: string): LocalServiceDTO {
       try {
          const validatedProps = createlocalServiceSchema.parse(props);
-
          const iconImage = icon?.length ? icon : undefined;
-
          const { name } = validatedProps;
-
          return new LocalServiceDTO(name, iconImage)
 
       } catch (error) {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
          }
-         throw Error('Error inesperado');
+         throw new Error('Error inesperado');
       }
    }
 
    static update(props: IUpdateLocalServiceSchema, icon?: string): LocalServiceDTO {
       try {
          const validatedProps = updatelocalServiceSchema.parse(props);
-
          const validatedIcon = icon?.length ? icon : undefined;
-
          const { name } = validatedProps
 
          return new LocalServiceDTO(name, validatedIcon)
@@ -52,7 +47,7 @@ export class LocalServiceDTO {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
          }
-         throw Error('Error inesperado');
+         throw new Error('Error inesperado');
       }
    }
 }

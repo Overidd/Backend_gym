@@ -6,7 +6,7 @@ import { BadRequestException } from '../utils';
 type ICreateLocalSchema = z.infer<typeof createLocalSchema>
 type IUpdateLocalSchema = z.infer<typeof updateLocalSchema>
 
-export interface IlocalById {
+export interface ILocalById {
    id: number;
    name: string;
    description: string;
@@ -35,7 +35,7 @@ export interface IlocalById {
    }[],
 }
 
-export interface IlocalAll {
+export interface ILocalAll {
    items: number,
    page: number,
    page_total: number,
@@ -48,13 +48,13 @@ export interface IlocalAll {
       opening_start: Date;
       opening_end: Date;
       isActivate: boolean;
+      image: string,
       created_at: Date,
       updated_at: Date,
-      image: string,
    }[]
 }
 
-export interface IlocalGeneric {
+export interface ILocalGeneric {
    id: number;
    name: string;
    description: string;
@@ -65,7 +65,7 @@ export interface IlocalGeneric {
    isActivate: boolean;
    created_at: Date,
    updated_at: Date,
-   clases?:{
+   clases?: {
       count: number,
    };
 
@@ -78,11 +78,27 @@ export interface IlocalGeneric {
    },
 }
 
-export interface IlocalImages {
+export interface ILocalImages {
    id: number;
    image: string;
    default: boolean,
    local_id: number
+}
+
+export interface ILocalDelete {
+   id: number;
+   name: string;
+   description: string;
+   address: string;
+   phone: string;
+   opening_start: Date;
+   opening_end: Date;
+   isActivate: boolean;
+   created_at: Date,
+   updated_at: Date,
+   images: {
+      image: string,
+   }[];
 }
 
 //*--------------Validations----------------
@@ -91,11 +107,22 @@ const localInput = (props: any) => {
       props.isActivate = JSON.parse(props.isActivate)
    };
    if (typeof props?.class_id === 'string') {
-      props.class_id = JSON.parse(props.class_id)
+      if (props.class_id[0] === '[') {
+         props.class_id = JSON.parse(props.class_id)
+      } else {
+         const arrayClassId: string[] = props.class_id.split(',')
+         props.class_id = arrayClassId.map((id) => Number(id))
+      }
    };
    if (typeof props?.services_id === 'string') {
-      props.services_id = JSON.parse(props.services_id)
+      if (props.services_id[0] === '[') {
+         props.services_id = JSON.parse(props.services_id)
+      } else {
+         const arrayServiceId: string[] = props.services_id.split(',')
+         props.services_id = arrayServiceId.map((id) => Number(id))
+      }
    };
+   console.log(props);
    return props;
 }
 
@@ -144,7 +171,7 @@ export class CreateLocalDTO {
       public readonly opening_start: Date,
       public readonly opening_end: Date,
       public readonly isActivate: boolean,
-      public readonly images: string[] | undefined,
+      public images: string[] | undefined,
       public readonly class_id: number[],
       public readonly services_id: number[],
    ) { }
@@ -152,7 +179,7 @@ export class CreateLocalDTO {
    static create(props: ICreateLocalSchema, images?: string[]): CreateLocalDTO {
       try {
          const parsedProps = localInput(props);
-
+         console.log(parsedProps, 'parsedProps');
          const validatedProps = createLocalSchema.parse(parsedProps);
          const validatedImages = images?.length ? images : undefined;
 
@@ -180,7 +207,7 @@ export class UpdateLocalDTO {
       public readonly opening_start?: Date,
       public readonly opening_end?: Date,
       public readonly isActivate?: boolean,
-      public readonly images?: string[],
+      public images?: string[],
       public readonly class_id?: number[],
       public readonly services_id?: number[],
    ) { }
@@ -203,7 +230,7 @@ export class UpdateLocalDTO {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
          }
-         throw Error('Error inesperado');
+         throw Error('Error inesperado del DTO');
       }
    }
 }
