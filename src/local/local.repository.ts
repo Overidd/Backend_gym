@@ -1,11 +1,11 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../data/postgres";
 import { ILocalRepository } from "../interfaces/repositories";
-import { BadRequestException } from "../utils";
-import { IlocalAll, IlocalById, CreateLocalDTO, IlocalGeneric, UpdateLocalDTO, IlocalImages } from "./local.DTO";
+import { BadRequestException, NotFoundException } from "../utils";
+import { ILocalAll, ILocalById, CreateLocalDTO, ILocalGeneric, UpdateLocalDTO, ILocalImages, ILocalDelete } from "./local.DTO";
 
 export class LocalRepository implements ILocalRepository {
-   async getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<IlocalAll> {
+   async getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<ILocalAll> {
 
       const totalItems = await prisma.local.count({
          where: {
@@ -16,7 +16,7 @@ export class LocalRepository implements ILocalRepository {
       const localgetAll = await prisma.local.findMany({
          where: {
             isActivate: true,
-            ...(services.length > 0 && { // spread condicional
+            ...(services?.length > 0 && { // spread condicional
                services: {
                   some: {
                      service: {
@@ -28,7 +28,7 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(classes.length > 0 && {
+            ...(classes?.length > 0 && {
                clases: {
                   some: {
                      class: {
@@ -40,7 +40,7 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(search && search.length > 0 && {
+            ...(search && search?.length > 0 && {
                OR: [
                   {
                      name: {
@@ -86,7 +86,7 @@ export class LocalRepository implements ILocalRepository {
                take: 1,
             },
          },
-         skip: page,
+         skip: (page - 1) * pagesize,
          take: pagesize,
       });
 
@@ -104,7 +104,7 @@ export class LocalRepository implements ILocalRepository {
          locals: result
       }
    }
-   async getById(id: number): Promise<IlocalById> {
+   async getById(id: number): Promise<ILocalById> {
       const local = await prisma.local.findUnique({
          where: {
             id: id
@@ -141,7 +141,7 @@ export class LocalRepository implements ILocalRepository {
       })
 
       if (!local) {
-         throw new BadRequestException("Local no encontrado")
+         throw new NotFoundException("Local no encontrado")
       }
 
       return {
@@ -161,10 +161,10 @@ export class LocalRepository implements ILocalRepository {
       }
    }
 
-   async create(data: CreateLocalDTO): Promise<IlocalGeneric> {
+   async create(data: CreateLocalDTO): Promise<ILocalGeneric> {
       try {
          const { newLocal, newLocalClasses, newLocalImages, newLocalServices }
-            = await prisma.$transaction(async () => {
+            = await prisma.$transaction(async (prisma) => {
                const newLocal = await prisma.local.create({
                   data: {
                      name: data.name,
@@ -231,40 +231,40 @@ export class LocalRepository implements ILocalRepository {
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2003') {
-               throw new BadRequestException('El ID proporcionado para service_id o class_id no existe');
-            }
+               throw new NotFoundException('Al crear un nuevo local los servicios o clases proporcionado no existe en la base de datos');
+            };
          };
          throw new Error('Error inesperado al crear el local');
       }
    }
-   async update(id: number, data: UpdateLocalDTO): Promise<IlocalGeneric> {
+
+   async update(id: number, data: UpdateLocalDTO): Promise<ILocalGeneric> {
       try {
-         const local = await prisma.local.findUnique({
-            where: {
-               id: id
-            }
-         })
+         // const local = await prisma.local.findUnique({
+         //    where: {
+         //       id: id
+         //    }
+         // })
 
-         // Verificar el horario
-         if (data.opening_start) {
-            if (local?.opening_end! < data.opening_start) {
-               throw new BadRequestException("El horario de apertura no puede ser mayor al horario de cierre");
-            }
-         };
+         // // Verificar el horario
+         // if (data.opening_start) {
+         //    if (local?.opening_end! < data.opening_start) {
+         //       throw new BadRequestException("El horario de apertura no puede ser mayor al horario de cierre");
+         //    }
+         // };
 
-         if (data.opening_end) {
-            if (local?.opening_start! > data.opening_end) {
-               throw new BadRequestException("El horario de cierre no puede ser menor al horario de apertura");
-            }
-         }
-
+         // if (data.opening_end) {
+         //    if (local?.opening_start! > data.opening_end) {
+         //       throw new BadRequestException("El horario de cierre no puede ser menor al horario de apertura");
+         //    }
+         // }
          const {
             updateLocal,
             newLocalImages,
             newLocalClasses,
             newLocalServices,
          }
-            = await prisma.$transaction(async () => {
+            = await prisma.$transaction(async (prisma) => {
                const updateLocal = await prisma.local.update({
                   where: {
                      id: id
@@ -330,13 +330,17 @@ export class LocalRepository implements ILocalRepository {
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2025') {
-               throw new BadRequestException('No existe el local')
+               throw new NotFoundException('No existe el local')
             }
+            if (error.code === 'P2003') {
+               throw new NotFoundException('Al crear un nuevo local los servicios o clases proporcionado no existe en la base de datos');
+            };
          }
+         console.log(error);
          throw new Error('Error inesperado al momento de actualizar el local');
       }
    }
-   async updateImageDefault(id: number, image_id_default: number): Promise<boolean> {
+   async updateImageDefault(id: number, image_id_default: number): Promise<ILocalImages> {
       try {
          const updateImageDefault = await prisma.localImages.update({
             where: {
@@ -359,18 +363,18 @@ export class LocalRepository implements ILocalRepository {
             },
          });
 
-         return true
+         return updateImageDefault
 
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2025') {
-               throw new BadRequestException('No existe la imagen relacionado con el local')
+               throw new NotFoundException('No existe la imagen relacionado con el local')
             }
          }
          throw new Error('Error inesperado');
       }
    }
-   async deleteImage(id: number, image_id: number): Promise<IlocalImages> {
+   async deleteImage(id: number, image_id: number): Promise<ILocalImages> {
       try {
          const deleteImage = await prisma.localImages.delete({
             where: {
@@ -427,7 +431,7 @@ export class LocalRepository implements ILocalRepository {
                id: id,
             }
          })
-         await prisma.local.update({
+         const localIsActivate = await prisma.local.update({
             where: {
                id: id,
             },
@@ -435,29 +439,35 @@ export class LocalRepository implements ILocalRepository {
                isActivate: !local?.isActivate
             }
          })
-
-         return true
+         return localIsActivate.isActivate
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2025') {
-               throw new BadRequestException('No existe el local')
+               throw new NotFoundException('No existe el local')
             }
          }
          throw new Error('Error inesperado al desactivar el local');
       }
    }
-   async delete(id: number): Promise<boolean> {
+   async delete(id: number): Promise<ILocalDelete> {
       try {
-         await prisma.local.delete({
+         const deleteLocal = await prisma.local.delete({
             where: {
                id: id,
             },
+            include: {
+               images: {
+                  select: {
+                     image: true,
+                  }
+               }
+            }
          });
-         return true;
+         return deleteLocal
       } catch (error) {
          // Verificar si el error es un P2025 (registro no encontrado)
          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-            throw new BadRequestException('No se encontró ningún local para eliminar');
+            throw new NotFoundException('No se encontró ningún local para eliminar');
          }
 
          throw new Error('Error inesperado al eliminar el local');
