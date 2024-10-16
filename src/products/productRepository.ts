@@ -62,7 +62,7 @@ export class ProductRepository implements IProductRepository {
 
          // Guarda nuevas imágenes en la tabla (producto_imagen)
          if (product.images != undefined && product.images?.length > 0) {
-            await prisma.product_image.createMany({
+            await prisma.productImage.createMany({
                data: product.images.map((image) => ({
                   image: image,
                   product_id: newProduct.id,
@@ -91,7 +91,7 @@ export class ProductRepository implements IProductRepository {
 
          // Para eliminar las imágenes específicas
          if (product.imageIdsDelete && product.imageIdsDelete.length > 0) {
-            await prisma.product_image.deleteMany({
+            await prisma.productImage.deleteMany({
                where: {
                   id: { in: product.imageIdsDelete },
                   product_id: id,
@@ -101,7 +101,7 @@ export class ProductRepository implements IProductRepository {
 
          // Guarda nuevas imágenes
          if (product.images && product.images.length > 0) {
-            await prisma.product_image.createMany({
+            await prisma.productImage.createMany({
                data: product.images.map((image) => ({
                   image: image,
                   product_id: id,

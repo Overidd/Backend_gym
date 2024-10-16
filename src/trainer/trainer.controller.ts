@@ -92,8 +92,8 @@ export class TrainerController {
 
             if (result.result !== 'ok') {
                return res.status(200).json({
-                  message: 'Se actualizo pero no se pudo eliminar la imagen de Cloudinary',
-                  error: result,
+                  message: 'Actualizacion exitosamente. La imagen se elimino de Cloudinary',
+                  data: result,
                });
             }
          }

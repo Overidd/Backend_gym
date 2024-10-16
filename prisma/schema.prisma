@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,26 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model product {
-  id            Int             @id @default(autoincrement())
+model Product {
+  id            Int            @id @default(autoincrement())
   name          String
-  description   String          @db.Text
+  description   String         @db.Text
   price         Float
-  stock         Int             @default(1)
-  isActive      Boolean         @default(true)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  product_image product_image[]
+  stock         Int            @default(1)
+  isActive      Boolean        @default(true)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  product_image ProductImage[]
 }
 
-model product_image {
+model ProductImage {
   id         Int     @id @default(autoincrement())
   image      String  @db.Text
   product_id Int
-  product    product @relation(fields: [product_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
-model trainer {
+model Trainer {
   id             Int      @id @default(autoincrement())
   first_name     String
   last_name      String
@@ -46,13 +40,62 @@ model trainer {
   updatedAt      DateTime @updatedAt
 }
 
-model local {
-  id            Int     @id @default(autoincrement())
+//*----------
+model Local {
+  id            Int            @id @default(autoincrement())
   name          String
+  description   String         @db.Text
   address       String
-  city          String
-  state         Boolean @default(true)
-  opening_hours String
   phone         String
-  // trainer       trainer[]
+  opening_start DateTime       @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
+  opening_end   DateTime       @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
+  isActivate    Boolean        @default(true)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  images        LocalImages[] // uno a muchos
+  clases        LocalClass[] // muchos a muchos
+  services      LocalService[] // muchos a muchos
+}
+
+model LocalImages {
+  id       Int     @id @default(autoincrement())
+  image    String  @db.Text
+  default  Boolean @default(false)
+  local_id Int
+  local    Local   @relation(fields: [local_id], references: [id], onDelete: Cascade)
+}
+
+model LocalClass {
+  id       Int      @id @default(autoincrement())
+  local_id Int
+  local    Local    @relation(fields: [local_id], references: [id], onDelete: Cascade)
+  class_id Int
+  class    ClassGym @relation(fields: [class_id], references: [id], onDelete: Cascade)
+}
+
+model LocalService {
+  id         Int        @id @default(autoincrement())
+  local_id   Int
+  local      Local      @relation(fields: [local_id], references: [id], onDelete: Cascade)
+  service_id Int
+  service    ServiceGym @relation(fields: [service_id], references: [id], onDelete: Cascade)
+}
+
+// -------------
+model ClassGym {
+  id          Int          @id @default(autoincrement())
+  name        String
+  icon        String       @db.Text
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  local_class LocalClass[]
+}
+
+model ServiceGym {
+  id            Int            @id @default(autoincrement())
+  name          String
+  icon          String         @db.Text
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  local_service LocalService[]
 }
