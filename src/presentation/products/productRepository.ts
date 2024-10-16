@@ -1,5 +1,5 @@
-import { prisma } from "../data/postgres";
-import { IProductRepository } from "../interfaces/repositories";
+import { prisma } from "../../data/postgres";
+import { IProductRepository } from "../../interfaces/repositories";
 import { IProduct, CreateProductDTO, UpdateProductDTO } from ".";
 
 

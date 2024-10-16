@@ -1,8 +1,8 @@
 import { Router } from 'express'
-import {ProductRouter} from './products/product.router'
-import { TrainerRouter } from './trainer';
-import { LocalRouter } from './local';
-import { LocalClaseRouter, LocalServiceRouter } from './local.services';
+import {ProductRouter} from './presentation/products/product.router'
+import { TrainerRouter } from './presentation/trainer';
+import { LocalRouter } from './presentation/local';
+import { LocalClaseRouter, LocalServiceRouter } from './presentation/local.services';
 
 export class AppRouter {
 

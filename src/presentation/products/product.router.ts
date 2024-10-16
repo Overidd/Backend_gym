@@ -1,4 +1,4 @@
-import type { IProductRepository } from '../interfaces/repositories';
+import type { IProductRepository } from '../../interfaces/repositories';
 import { ProductController, ProductRepository } from '.';
 import multer from 'multer';
 import { Router } from 'express';

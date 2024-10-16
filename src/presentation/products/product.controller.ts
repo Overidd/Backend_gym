@@ -1,4 +1,4 @@
-import { IProductRepository } from "../interfaces/repositories/ProductRepository";
+import { IProductRepository } from "../../interfaces/repositories/ProductRepository";
 import { ProductRepository, CreateProductDTO, UpdateProductDTO } from '.';
 import type { Request, Response } from 'express';
 

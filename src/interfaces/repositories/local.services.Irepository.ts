@@ -1,4 +1,4 @@
-import { IServices, LocalServiceDTO } from "../../local.services";
+import { IServices, LocalServiceDTO } from "../../presentation/local.services";
 
 export interface ILocalServiceRepository {
    getAll(): Promise<IServices[]>;

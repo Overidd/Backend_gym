@@ -5,9 +5,9 @@ import request from "supertest";
 import createApp from "./app";
 
 import { createProduct, mockProductRepository } from "./utils.js";
-import type { CreateProduct, IProduct } from "../products/product.DTOS";
+import type { CreateProduct, IProduct } from "../presentation/products/product.DTOS";
 
-import { ProductRouter, publicProductSchema } from "../products";
+import { ProductRouter, publicProductSchema } from "../presentation/products";
 
 const productRouter = new ProductRouter(mockProductRepository)
 

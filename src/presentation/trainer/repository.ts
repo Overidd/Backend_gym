@@ -1,7 +1,7 @@
-import { prisma } from "../data/postgres";
-import { ITrainerRepository } from "../interfaces/repositories";
-import { BadRequestException, DeactivatedException, NotFoundException } from "../utils";
-import { ITrainer, TrainerDTO } from "./trainer.DTOS";
+import { prisma } from "../../data/postgres";
+import { ITrainerRepository } from "../../interfaces/repositories";
+import { BadRequestException, DeactivatedException, NotFoundException } from "../../utils";
+import { ITrainer, TrainerDTO } from "./DTO";
 
 export class TrainerRepository implements ITrainerRepository {
    async getAll(): Promise<ITrainer[]> {

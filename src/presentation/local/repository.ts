@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../data/postgres";
-import { ILocalRepository } from "../interfaces/repositories";
-import { BadRequestException, NotFoundException } from "../utils";
-import { ILocalAll, ILocalById, CreateLocalDTO, ILocalGeneric, UpdateLocalDTO, ILocalImages, ILocalDelete } from "./local.DTO";
+import { prisma } from "../../data/postgres";
+import { ILocalRepository } from "../../interfaces/repositories";
+import { BadRequestException, NotFoundException } from "../../utils";
+import { ILocalAll, ILocalById, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete, ILocalGeneric } from ".";
 
 export class LocalRepository implements ILocalRepository {
    async getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<ILocalAll> {

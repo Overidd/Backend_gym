@@ -1,4 +1,4 @@
-import { ITrainer, TrainerDTO } from "../../trainer";
+import { ITrainer, TrainerDTO } from "../../presentation/trainer";
 
 export interface ITrainerRepository {
    getAll(): Promise<ITrainer[]>;

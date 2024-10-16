@@ -1,7 +1,7 @@
 
 import z from 'zod';
-import { createTrainerSchema, updateTrainerSchema } from './trainer.schema';
-import { BadRequestException } from '../utils';
+import { createTrainerSchema, updateTrainerSchema } from './schema';
+import { BadRequestException } from '../../utils';
 
 export type CreateProduct = z.infer<typeof createTrainerSchema>;
 export type UpdateProduct = z.infer<typeof updateTrainerSchema>;

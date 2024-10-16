@@ -1,4 +1,4 @@
-import type { CreateProduct, IProduct as Product, UpdateProduct } from "../products/product.DTOS";
+import type { CreateProduct, IProduct as Product, UpdateProduct } from "../presentation/products/product.DTOS";
 import type { IProductRepository } from "../interfaces/repositories/ProductRepository";
 
 

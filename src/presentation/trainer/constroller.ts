@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express';
-import { ITrainerRepository } from "../interfaces/repositories";
-import { TrainerDTO } from "./trainer.DTOS";
-import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../utils";
-import { cloudinary } from '../config/cloudinary';
+import { ITrainerRepository } from "../../interfaces/repositories";
+import { TrainerDTO } from "./DTO";
+import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../../utils";
+import { cloudinary } from '../../config/cloudinary';
 
 export class TrainerController {
    constructor(
@@ -22,7 +22,6 @@ export class TrainerController {
       } catch (error) {
          res.status(500).json({
             'message': 'Error inesperado',
-            'error': error
          })
       }
    }
@@ -50,21 +49,18 @@ export class TrainerController {
       } catch (error) {
          if (error instanceof BadRequestException) {
             return res.status(error.statusCode).json({
-               'message': 'Trainer found',
-               'error': error.message
+               'message': error.message,
             })
          }
 
          if (error instanceof UnauthorizedException) {
             return res.status(error.statusCode).json({
-               'message': 'Unauthorized',
-               'error': error.message
+               'message': error.message,
             })
          }
 
          return res.status(500).json({
             'message': 'Error inesperado',
-            'error': error
          })
       }
    }
@@ -107,29 +103,25 @@ export class TrainerController {
 
          if (error instanceof NotFoundException) {
             return res.status(404).json({
-               'message': 'Trainer not found',
-               'error': error.message
+               'message': error.message,
             })
          }
 
          if (error instanceof UnauthorizedException) {
             return res.status(401).json({
-               'message': 'Unauthorized',
-               'error': error.message
+               'message': error.message,
             })
          }
 
 
          if (error instanceof BadRequestException) {
             return res.status(400).json({
-               'message': 'BadRequestException',
-               'error': error.message
+               'message':error.message,
             })
          }
 
          return res.status(500).json({
             'message': 'Error inesperado',
-            'error': error
          })
       }
    }
@@ -160,20 +152,17 @@ export class TrainerController {
       } catch (error) {
          if (error instanceof NotFoundException) {
             return res.status(404).json({
-               'message': 'Trainer not found',
-               'error': error.message
+               'message': error.message,
             })
          }
 
          if (error instanceof UnauthorizedException){
             return res.status(401).json({
-               'message': 'Unauthorized',
-               'error': error.message
+               'message': error.message,
             })
          }
          res.status(500).json({
             'message': 'Error inesperado',
-            'error': error
          })
          
       }

@@ -1,4 +1,4 @@
-import { ILocalAll, ILocalById, ILocalGeneric, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete } from '../../local'
+import { ILocalAll, ILocalById, ILocalGeneric, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete } from '../../presentation/local'
 
 export interface ILocalRepository {
    getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<ILocalAll>;

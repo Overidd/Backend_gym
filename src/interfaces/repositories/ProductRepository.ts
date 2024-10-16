@@ -1,4 +1,4 @@
-import type { IProduct, UpdateProductDTO, CreateProductDTO } from '../../products';
+import type { IProduct, UpdateProductDTO, CreateProductDTO } from '../../presentation/products';
 
 export interface IProductRepository {
     getAll(skitp: number, pagesize: number): Promise<IProduct[]>;

@@ -3,7 +3,7 @@ import createApp from '../tests/app.js';
 import { mockProductRepository } from '../tests/utils.js';
 
 
-import { ProductRouter } from '../products/product.router.js';
+import { ProductRouter } from '../presentation/products/product.router.js';
 
 
 const routerProduct = new ProductRouter(mockProductRepository)

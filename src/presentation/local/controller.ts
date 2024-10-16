@@ -1,16 +1,8 @@
-import { ILocalRepository } from "../interfaces/repositories";
+import { ILocalRepository } from "../../interfaces/repositories";
 import { Request, Response } from 'express';
-import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../utils";
-import { cloudinary } from "../config/cloudinary";
-import { CreateLocalDTO, UpdateLocalDTO } from ".";
-
-type queryString = {
-   services: string[] | string,
-   clases: string[] | string,
-   search: string,
-   page: string,
-   pagesize: string
-}
+import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../../utils";
+import { cloudinary } from "../../config/cloudinary";
+import { CreateLocalDTO, queryString, UpdateLocalDTO } from ".";
 
 // category=alimento&category=juguete, Express lo agrupa en un array: ['alimento', 'juguete'].
 export class LocalController {
@@ -44,7 +36,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error.message
             })
          }
       };
@@ -69,7 +60,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -115,13 +105,11 @@ export class LocalController {
          if (error instanceof NotFoundException) {
             return res.status(404).json({
                message: 'No encontrado',
-               error: error.message,
             })
          }
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -133,9 +121,7 @@ export class LocalController {
          const body = req.body;
          const images = req.files as Express.Multer.File[];
 
-         console.log(body, 'body');
          const dataDTO = UpdateLocalDTO.update(body);
-         console.log(dataDTO);
 
          if (images && images.length > 0) {
             const imagesUrl = await Promise.all(
@@ -170,11 +156,9 @@ export class LocalController {
                message: error.message,
             })
          }
-         console.log(error);
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error.message,
             })
          }
       }
@@ -206,7 +190,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -261,7 +244,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -298,7 +280,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -341,7 +322,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }
@@ -376,7 +356,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error.message
             })
          }
       }
@@ -415,7 +394,6 @@ export class LocalController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error,
             })
          }
       }

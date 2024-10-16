@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { ILocalServiceRepository } from "../interfaces/repositories";
-import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from '../utils';
-import { LocalServiceDTO } from './local.service.DTO';
-import { cloudinary } from '../config/cloudinary';
+import { ILocalServiceRepository } from "../../interfaces/repositories";
+import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from '../../utils';
+import { LocalServiceDTO } from './DTO';
+import { cloudinary } from '../../config/cloudinary';
 
 
 export class LocalServicesController {
@@ -23,7 +23,6 @@ export class LocalServicesController {
          if (error instanceof Error) {
             return res.status(500).json({
                message: 'Error inesperado',
-               error: error.message
             })
          };
       }
@@ -63,7 +62,7 @@ export class LocalServicesController {
          }
          if (error instanceof Error) {
             return res.status(500).json({
-               message: error.message,
+               message: 'Error inesperado',
             })
          }
       };
@@ -128,7 +127,7 @@ export class LocalServicesController {
 
          if (error instanceof Error) {
             return res.status(500).json({
-               message: error.message,
+               message: 'Error inesperado',
             })
          }
       }
@@ -189,8 +188,7 @@ export class LocalServicesController {
          }
          if (error instanceof Error) {
             return res.status(500).json({
-               message: 'Error inesperado',
-               error: error
+               message: 'Error inesperado'
             });
          }
       }

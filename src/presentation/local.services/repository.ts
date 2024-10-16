@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { prisma } from "../data/postgres";
-import { ILocalServiceRepository } from "../interfaces/repositories";
-import { IServices, LocalServiceDTO } from "./local.service.DTO";
-import { NotFoundException } from "../utils";
+import { prisma } from "../../data/postgres";
+import { ILocalServiceRepository } from "../../interfaces/repositories";
+import { NotFoundException } from "../../utils";
+import { IServices, LocalServiceDTO } from ".";
 
 export class ClasesRepository implements ILocalServiceRepository {
    async getAll(): Promise<IServices[]> {

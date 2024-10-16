@@ -1,19 +1,7 @@
 import z from 'zod';
-import { createlocalServiceSchema, updatelocalServiceSchema } from '.'
-import { BadRequestException } from '../utils';
+import { createlocalServiceSchema, ICreateLocalServiceSchema, IUpdateLocalServiceSchema, updatelocalServiceSchema } from '.'
+import { BadRequestException } from '../../utils';
 
-//* --------LOCAL INTERFACES--------
-type ICreateLocalServiceSchema = z.infer<typeof createlocalServiceSchema>
-type IUpdateLocalServiceSchema = z.infer<typeof updatelocalServiceSchema>
-
-export interface IServices {
-   id: number;
-   name: string;
-   icon: string;
-   created_at: Date,
-   updated_at: Date
-}
-//*--------------DTO----------------
 export class LocalServiceDTO {
    constructor(
       public readonly name?: string,
