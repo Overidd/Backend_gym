@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../data/postgres";
-import { ILocalServiceRepository } from "../../interfaces/repositories";
+import { ILocalServiceRepository } from "../../interfaces";
 import { NotFoundException } from "../../utils";
 import { IServices, LocalServiceDTO } from ".";
 

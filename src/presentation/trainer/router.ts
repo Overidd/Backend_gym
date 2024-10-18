@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { TrainerController, TrainerRepository } from '.';
+import { Cloudinary } from '../../services';
+import { envs } from '../../config';
 
 const storageFile = multer.memoryStorage();
 const upload = multer({ storage: storageFile });
@@ -10,8 +12,9 @@ export class TrainerRouter {
    public get router(): Router {
 
       const router = Router();
+      const cloudinary = new Cloudinary(envs.cloud_activate)
       const repository = new TrainerRepository()
-      const controller = new TrainerController(repository);
+      const controller = new TrainerController(repository, cloudinary);
 
       router.get('/all', controller.getAllTrainers)
 

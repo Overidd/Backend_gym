@@ -94,7 +94,7 @@ export class LocalRepository implements ILocalRepository {
          return {
             ...local,
             opening_start: local.opening_start.toISOString().substring(11, 19),
-            opening_end: local.opening_end.toISOString().substring(11, 19),    
+            opening_end: local.opening_end.toISOString().substring(11, 19),
             image: images?.[0]?.image,
          };
       });
@@ -235,7 +235,57 @@ export class LocalRepository implements ILocalRepository {
                throw new NotFoundException('Los servicios o clases seleccionados no existe');
             };
          };
+         console.log(error);
          throw new Error('Error inesperado al crear el local');
+      }
+   }
+
+   async validateService(id: number): Promise<boolean> {
+      try {
+         const service = await prisma.serviceGym.findUnique({
+            where: {
+               id: id
+            }
+         })
+
+         if (!service) {
+            throw new NotFoundException(`El servicio con el id ${id} no existe`);
+         }
+         return true
+      } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2003') {
+               throw new NotFoundException(`El servicio con el id ${id} no existe`);
+            };
+         };
+         if (error instanceof NotFoundException) {
+            throw new NotFoundException(error.message);
+         }
+         throw new Error('Error inesperado al validar el servicio');
+      }
+   }
+
+   async validateClass(id: number): Promise<boolean> {
+      try {
+         const clase = await prisma.classGym.findUnique({
+            where: {
+               id: id
+            }
+         })
+         if (!clase) {
+            throw new NotFoundException(`La clase con el id ${id} no existe`);
+         }
+         return true
+      } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2003') {
+               throw new NotFoundException(`La clase con el id ${id} no existe`);
+            };
+         };
+         if (error instanceof NotFoundException) {
+            throw new NotFoundException(error.message);
+         }
+         throw new Error('Error inesperado al validar la clase');
       }
    }
 
@@ -323,7 +373,7 @@ export class LocalRepository implements ILocalRepository {
          return {
             ...updateLocal,
             opening_start: updateLocal.opening_start.toISOString().substring(11, 19),
-            opening_end: updateLocal.opening_end.toISOString().substring(11, 19),    
+            opening_end: updateLocal.opening_end.toISOString().substring(11, 19),
             images: newLocalImages,
             clases: newLocalClasses,
             services: newLocalServices,

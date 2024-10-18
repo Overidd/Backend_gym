@@ -12,7 +12,7 @@ export class Cloudinary implements HandlerImage {
    public uploadImage = (file: Express.Multer.File, folder: string): Promise<string> => {
       return new Promise((resolve, reject) => {
          try {
-            if (!this.isUploadImage) return resolve(file.filename);
+            if (!this.isUploadImage) return resolve(file?.originalname || 'imagen sin nombre') ;
 
             const stream = cloudinary.v2.uploader.upload_stream(
                { folder: folder }, // Especifica la carpeta en Cloudinary

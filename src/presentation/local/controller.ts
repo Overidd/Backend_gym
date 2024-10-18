@@ -81,8 +81,18 @@ export class LocalController {
          // Asignar las images al DTO
          dataDTO.images = imagesUrl
 
-         const newLocal = await this.localRepository.create(dataDTO);
+         // Validar la clase si existe
+         await Promise.all(dataDTO.class_id.map(async (id) => {
+            await this.localRepository.validateClass(id)
+         }))
+         // Validar el servicio si existe
+         await Promise.all(dataDTO.services_id.map(async (id) => {
+            await this.localRepository.validateService(id)
+         }))
 
+         console.log(dataDTO);
+         // Crear el local
+         const newLocal = await this.localRepository.create(dataDTO);
          return res.status(201).json({
             message: 'Local creado exitosamente',
             data: newLocal
@@ -104,6 +114,7 @@ export class LocalController {
             })
          }
          if (error instanceof Error) {
+            console.error(error);
             return res.status(500).json({
                message: 'Error inesperado del servidor',
             })

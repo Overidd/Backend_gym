@@ -37,7 +37,7 @@ export class TrainerDTO {
       public readonly specialization?: string,
       public readonly description?: string,
       public readonly isActive?: boolean,
-      public readonly image?: string,
+      public image?: string,
    ) { }
 
    static create(props: CreateProduct, image?: string): TrainerDTO {

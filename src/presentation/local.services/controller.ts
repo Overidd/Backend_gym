@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { ILocalServiceRepository } from "../../interfaces/repositories";
-import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from '../../utils';
+import { HandlerImage, ILocalServiceRepository } from '../../interfaces';
+import { BadRequestException, NotFoundException, UnauthorizedException, validateId } from '../../utils';
 import { LocalServiceDTO } from './DTO';
-import { cloudinary } from '../../config/cloudinary.config';
 
 
 export class LocalServicesController {
    constructor(
       private readonly localServiceRepository: ILocalServiceRepository,
-      private readonly nameFolder: string
+      private readonly handlerImage: HandlerImage,
+      private readonly nameFolder: string,
    ) { }
 
    getAll = async (_req: Request, res: Response) => {
@@ -34,13 +34,13 @@ export class LocalServicesController {
          const icon = req.file as Express.Multer.File;
 
          if (!icon) {
-            throw new BadRequestException('Debes subir un icono');
+            throw new BadRequestException(['Debes subir un icono']);
          }
          const createDTO = LocalServiceDTO.create(body);
 
          // Subir el icon a cloudinary
-         const iconUrl = await uploadToCloudinary(icon, this.nameFolder);
-         createDTO.icon = iconUrl.secure_url;
+         const iconUrl = await this.handlerImage.uploadImage(icon, this.nameFolder);
+         createDTO.icon = iconUrl;
 
          const newService = await this.localServiceRepository.create(createDTO);
 
@@ -52,7 +52,7 @@ export class LocalServicesController {
       } catch (error) {
          if (error instanceof BadRequestException) {
             return res.status(400).json({
-               message: error.message
+               messages: error.messages
             })
          };
          if (error instanceof UnauthorizedException) {
@@ -73,29 +73,26 @@ export class LocalServicesController {
          const body = req.body;
          const icon = req.file as Express.Multer.File;
 
-         if (isNaN(parseInt(id))) {
-            throw new BadRequestException('id debe ser un entero');
-         }
+         const IdParse = validateId(id);
 
          const updateDTO = LocalServiceDTO.update(body);
 
          // Subir el icon a cloudinary en el caso de recibir una icono
          if (icon) {
-            const iconUrl = await uploadToCloudinary(icon, this.nameFolder);
-            updateDTO.icon = iconUrl.secure_url;
+            const iconUrl = await this.handlerImage.uploadImage(icon, this.nameFolder);
+            updateDTO.icon = iconUrl;
          }
 
-         const { update, dataPast } = await this.localServiceRepository.update(parseInt(id), updateDTO);
+         const { update, dataPast } = await this.localServiceRepository.update(IdParse, updateDTO);
 
          // Eliminar el icono de cloudinary en el caso de recibir un nuevo icono
          if (dataPast.icon && typeof updateDTO.icon == 'string') {
-            const publicId = extractPublicIdFromUrl(dataPast.icon)
-            const result = await cloudinary.uploader.destroy(publicId!);
+            const resultDestroyImage  = await this.handlerImage.deleteImage(dataPast.icon);
 
-            if (result.result !== 'ok') {
+            if (!resultDestroyImage) {
                return res.status(200).json({
-                  message: 'Servicio actualizado exitosamente, el icono no se elimino de cloudinary',
-                  data: result,
+                  message: 'Servicio actualizado exitosamente. El icono no se logro eliminar',
+                  data: update
                })
             }
          };
@@ -108,7 +105,7 @@ export class LocalServicesController {
       } catch (error) {
          if (error instanceof BadRequestException) {
             return res.status(400).json({
-               message: error.message,
+               messages: error.messages,
             })
          };
 
@@ -137,27 +134,25 @@ export class LocalServicesController {
          const { id } = req.params;
          const { is_delete_definitive: definitive } = req.body;
 
-         if (typeof parseInt(id) !== 'number') {
-            throw new BadRequestException('id debe ser un entero');
-         }
+         const IdParse = validateId(id);
+
          if (typeof definitive !== 'boolean') {
-            throw new BadRequestException('is_delete_definitive es requerido');
+            throw new BadRequestException(['is_delete_definitive es requerido']);
          }
 
          if (typeof Boolean(definitive) !== 'boolean') {
-            throw new BadRequestException('is_delete_definitive debe ser un booleano');
+            throw new BadRequestException(['is_delete_definitive debe ser un booleano']);
          }
 
-         const deleteData = await this.localServiceRepository.delete(parseInt(id), definitive);
+         const deleteData = await this.localServiceRepository.delete(IdParse, definitive);
 
          // Eliminar el icono de cloudinary 
          if (deleteData.icon) {
-            const publicId = extractPublicIdFromUrl(deleteData.icon)
-            const result = await cloudinary.uploader.destroy(publicId!);
+            const imageDestroy = await this.handlerImage.deleteImage(deleteData.icon);
 
-            if (result.result !== 'ok') {
+            if (!imageDestroy) {
                return res.status(200).json({
-                  message: 'Servicio eliminado exitosamente, el icono no se elimino de cloudinary',
+                  message: 'Servicio eliminado exitosamente, El icono no se logro eliminar',
                   data: true,
                })
             }
@@ -171,7 +166,7 @@ export class LocalServicesController {
       } catch (error) {
          if (error instanceof BadRequestException) {
             return res.status(400).json({
-               message: error.message,
+               messages: error.messages,
             })
          };
          if (error instanceof UnauthorizedException) {

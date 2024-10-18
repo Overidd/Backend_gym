@@ -1,12 +1,13 @@
 import type { Request, Response } from 'express';
-import { ITrainerRepository } from "../../interfaces/repositories";
 import { TrainerDTO } from "./DTO";
-import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../../utils";
+import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, validateId } from "../../utils";
 import { cloudinary } from '../../config/cloudinary.config';
+import { HandlerImage,ITrainerRepository } from '../../interfaces';
 
 export class TrainerController {
    constructor(
-      private readonly TrainerRepository: ITrainerRepository
+      private readonly TrainerRepository: ITrainerRepository,
+      private readonly handlerImage: HandlerImage,
    ) { }
 
    public getAllTrainers = async (_req: Request, res: Response) => {
@@ -32,24 +33,24 @@ export class TrainerController {
          const image = req.file as Express.Multer.File
 
          if (!image) {
-            throw new BadRequestException('Image es requerido');
+            throw new BadRequestException(['Image es requerido']);
          }
 
-         const resultCloudinary  = await uploadToCloudinary(image, 'trainer')
+         const urlUpload  = await this.handlerImage.uploadImage(image, 'trainer')
 
-         const trainer = TrainerDTO.create(req.body, resultCloudinary?.secure_url);
+         const trainer = TrainerDTO.create(req.body, urlUpload);
 
          const newTrainer = await this.TrainerRepository.create(trainer!);
 
          res.status(201).json({
-            'message': 'trainer created successfully',
+            'message': 'Trainer creado exitosamente',
             'data': newTrainer
          })
 
       } catch (error) {
          if (error instanceof BadRequestException) {
             return res.status(error.statusCode).json({
-               'message': error.message,
+               'messages': error.messages,
             })
          }
 
@@ -67,18 +68,17 @@ export class TrainerController {
 
    public updateTrainer = async (req: Request, res: Response) => {
       try {
-         const id = parseInt(req.params.id);
+         const idParse = validateId(req.params.id);
          const image = req.file as Express.Multer.File
-
-         let resultCloudinary = undefined
-
+         
+         const trainerDTO = TrainerDTO.update(req.body);
+         
          if (image) {
-            resultCloudinary = await uploadToCloudinary(image, 'trainer')
+            const urlUpload = await this.handlerImage.uploadImage(image, 'trainer')
+            trainerDTO.image = urlUpload  
          }
 
-         const trainer = TrainerDTO.update(req.body, resultCloudinary?.secure_url);
-
-         const { updatedTrainer, trainerPast } = await this.TrainerRepository.update(id, trainer!);
+         const { updatedTrainer, trainerPast } = await this.TrainerRepository.update(idParse, trainerDTO!);
 
          if (trainerPast?.image && image) {
             const publicId = extractPublicIdFromUrl(trainerPast.image);
@@ -100,7 +100,6 @@ export class TrainerController {
          })
 
       } catch (error) {
-
          if (error instanceof NotFoundException) {
             return res.status(404).json({
                'message': error.message,
@@ -116,7 +115,7 @@ export class TrainerController {
 
          if (error instanceof BadRequestException) {
             return res.status(400).json({
-               'message':error.message,
+               'messages':error.messages,
             })
          }
 
@@ -128,18 +127,16 @@ export class TrainerController {
 
    public deleteTrainer = async (req: Request, res: Response) => {
       try {
-         const id = parseInt(req.params.id);
-         const deleteTrainer = await this.TrainerRepository.delete(id);
+         const idParse = validateId(req.params.id);
+         const deleteTrainer = await this.TrainerRepository.delete(idParse);
 
          if (deleteTrainer.image){
-            const publicId = extractPublicIdFromUrl(deleteTrainer.image);
-            
-            const resul = await cloudinary.uploader.destroy(publicId!);
+            const imageDistroy = await this.handlerImage.deleteImage(deleteTrainer.image);
 
-            if (resul.result !== 'ok') {
+            if (!imageDistroy) {
                return res.status(200).json({
                   message: 'Se elimino el trainer pero no se pudo eliminar la imagen de Cloudinary',
-                  error: resul,
+                  data: true,
                });
             }
          }
@@ -150,6 +147,11 @@ export class TrainerController {
          })
          
       } catch (error) {
+         if (error instanceof BadRequestException) {
+            return res.status(400).json({
+               messages: error.messages,
+            })
+         }
          if (error instanceof NotFoundException) {
             return res.status(404).json({
                'message': error.message,

@@ -11,6 +11,8 @@ export interface ILocalRepository {
    deleteClases(id: number, class_id: number): Promise<boolean>;
    isActivate(id: number): Promise<boolean>;
    delete(id: number): Promise<ILocalDelete>;
+   validateService(id: number): Promise<boolean>;
+   validateClass(id: number): Promise<boolean>;
 }
 
 
