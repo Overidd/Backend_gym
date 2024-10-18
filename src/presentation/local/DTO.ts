@@ -22,7 +22,6 @@ const localInput = (props: any) => {
          props.services_id = arrayServiceId.map((id) => Number(id))
       }
    };
-   console.log(props);
    return props;
 }
 
@@ -34,7 +33,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
    const dateNow = `${month + 1}-${day}-${year}`
 
    if (typeof opening_start === 'string') {
-      const dateComplete = dateNow + '-' + opening_start
+      const dateComplete = dateNow + '-' + opening_start+'Z'
       opening_start = new Date(dateComplete)
 
       if (isNaN(opening_start.getTime())) {
@@ -42,7 +41,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
       }
    };
    if (typeof opening_end === 'string') {
-      const dateComplete = dateNow + '-' + opening_end
+      const dateComplete = dateNow + '-' + opening_end+'Z'
       opening_end = new Date(dateComplete)
 
       if (isNaN(opening_start!.getTime())) {
@@ -52,9 +51,13 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
 
    if (isCreate) {
       if (opening_start! > opening_end!) {
-         throw new BadRequestException("La fecha de apertura no puede ser mayor a la fecha de cierre.");
+         throw new BadRequestException(["La Hora de apertura no puede ser mayor a la hora de cierre"]);
       }
    }
+   console.log({
+      date_start: opening_start,
+      date_end: opening_end
+   });
    return {
       date_start: opening_start,
       date_end: opening_end
@@ -70,7 +73,7 @@ export class CreateLocalDTO {
       public readonly phone: string,
       public readonly opening_start: Date,
       public readonly opening_end: Date,
-      public readonly isActivate: boolean,
+      public readonly isActivate: boolean | undefined,
       public images: string[] | undefined,
       public readonly class_id: number[],
       public readonly services_id: number[],
@@ -79,7 +82,6 @@ export class CreateLocalDTO {
    static create(props: ICreateLocalSchema, images?: string[]): CreateLocalDTO {
       try {
          const parsedProps = localInput(props);
-         console.log(parsedProps, 'parsedProps');
          const validatedProps = createLocalSchema.parse(parsedProps);
          const validatedImages = images?.length ? images : undefined;
 

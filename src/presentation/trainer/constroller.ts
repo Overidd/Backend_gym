@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { ITrainerRepository } from "../../interfaces/repositories";
 import { TrainerDTO } from "./DTO";
 import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from "../../utils";
-import { cloudinary } from '../../config/cloudinary';
+import { cloudinary } from '../../config/cloudinary.config';
 
 export class TrainerController {
    constructor(

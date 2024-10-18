@@ -10,8 +10,8 @@ export type ILocalById = {
    description: string;
    address: string;
    phone: string;
-   opening_start: Date;
-   opening_end: Date;
+   opening_start: Date | string;
+   opening_end: Date | string;
    isActivate: boolean;
    created_at: Date,
    updated_at: Date,
@@ -43,8 +43,8 @@ export type ILocalAll = {
       description: string;
       address: string;
       phone: string;
-      opening_start: Date;
-      opening_end: Date;
+      opening_start: Date | string;
+      opening_end: Date | string;
       isActivate: boolean;
       image: string,
       created_at: Date,
@@ -58,8 +58,8 @@ export type ILocalGeneric = {
    description: string;
    address: string;
    phone: string;
-   opening_start: Date;
-   opening_end: Date;
+   opening_start: Date | string;
+   opening_end: Date    | string;
    isActivate: boolean;
    created_at: Date,
    updated_at: Date,

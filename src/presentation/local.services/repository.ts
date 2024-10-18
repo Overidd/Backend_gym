@@ -55,7 +55,6 @@ export class ClasesRepository implements ILocalServiceRepository {
          if (error instanceof NotFoundException) {
             throw new NotFoundException(error.message);
          }
-         console.log(error);
          throw new Error('Error inesperado del servidor');
       }
    }
@@ -75,7 +74,6 @@ export class ClasesRepository implements ILocalServiceRepository {
             },
 
          });
-         console.log(clasesCount, 'clasesCount');
          if (clasesCount > 0) {
             const localesText = clasesCount === 1 ? 'local está' : 'locales están';
             throw new NotFoundException(`No es posible eliminar la clase, ${clasesCount} ${localesText} haciendo uso`);
@@ -128,7 +126,6 @@ export class ServiceRepository implements ILocalServiceRepository {
                id: id
             }
          });
-         console.log( dataClasePast, 'dataClasePast');
 
          if (!dataClasePast) {
             throw new NotFoundException('No se encontro el servicio');
@@ -153,7 +150,6 @@ export class ServiceRepository implements ILocalServiceRepository {
          if (error instanceof NotFoundException) {
             throw new NotFoundException(error.message);
          }
-         console.log(error);
          throw new Error('Error inesperado del servidor');
       }
    }

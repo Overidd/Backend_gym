@@ -93,6 +93,8 @@ export class LocalRepository implements ILocalRepository {
       const result = localgetAll.map(({ images, ...local }) => {
          return {
             ...local,
+            opening_start: local.opening_start.toISOString().substring(11, 19),
+            opening_end: local.opening_end.toISOString().substring(11, 19),    
             image: images?.[0]?.image,
          };
       });
@@ -143,15 +145,14 @@ export class LocalRepository implements ILocalRepository {
       if (!local) {
          throw new NotFoundException("Local no encontrado")
       }
-
       return {
          id: local.id,
          name: local.name,
          description: local.description,
          address: local.address,
          phone: local.phone,
-         opening_start: local.opening_start,
-         opening_end: local.opening_end,
+         opening_start: local.opening_start.toISOString().substring(11, 19),
+         opening_end: local.opening_end.toISOString().substring(11, 19),
          isActivate: local.isActivate,
          images: local.images,
          clases: local.clases.map(({ class: { name, id } }) => ({ name, id })),
@@ -231,7 +232,7 @@ export class LocalRepository implements ILocalRepository {
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
             if (error.code === 'P2003') {
-               throw new NotFoundException('Al crear un nuevo local los servicios o clases proporcionado no existe en la base de datos');
+               throw new NotFoundException('Los servicios o clases seleccionados no existe');
             };
          };
          throw new Error('Error inesperado al crear el local');
@@ -321,6 +322,8 @@ export class LocalRepository implements ILocalRepository {
 
          return {
             ...updateLocal,
+            opening_start: updateLocal.opening_start.toISOString().substring(11, 19),
+            opening_end: updateLocal.opening_end.toISOString().substring(11, 19),    
             images: newLocalImages,
             clases: newLocalClasses,
             services: newLocalServices,
@@ -333,10 +336,9 @@ export class LocalRepository implements ILocalRepository {
                throw new NotFoundException('No existe el local')
             }
             if (error.code === 'P2003') {
-               throw new NotFoundException('Al crear un nuevo local los servicios o clases proporcionado no existe en la base de datos');
+               throw new NotFoundException('Los servicios o clases seleccionados no existe');
             };
          }
-         console.log(error);
          throw new Error('Error inesperado al momento de actualizar el local');
       }
    }

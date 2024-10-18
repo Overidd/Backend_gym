@@ -7,4 +7,6 @@ export const envs = {
    cloud_api_key: get('CLOUD_API_KEY').required().asString(),
    cloud_api_secret: get('CLOUD_APY_SECRET').required().asString(),
    server_url: get('SERVER_URL').asString(),
+
+   cloud_activate: get('CLOUD_ACTIVATE').default('false').asBool(),
 }

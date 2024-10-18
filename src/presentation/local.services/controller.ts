@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ILocalServiceRepository } from "../../interfaces/repositories";
 import { BadRequestException, extractPublicIdFromUrl, NotFoundException, UnauthorizedException, uploadToCloudinary } from '../../utils';
 import { LocalServiceDTO } from './DTO';
-import { cloudinary } from '../../config/cloudinary';
+import { cloudinary } from '../../config/cloudinary.config';
 
 
 export class LocalServicesController {
@@ -78,7 +78,6 @@ export class LocalServicesController {
          }
 
          const updateDTO = LocalServiceDTO.update(body);
-         console.log(updateDTO);
 
          // Subir el icon a cloudinary en el caso de recibir una icono
          if (icon) {
@@ -137,7 +136,6 @@ export class LocalServicesController {
       try {
          const { id } = req.params;
          const { is_delete_definitive: definitive } = req.body;
-         console.log(definitive, "definitive");
 
          if (typeof parseInt(id) !== 'number') {
             throw new BadRequestException('id debe ser un entero');

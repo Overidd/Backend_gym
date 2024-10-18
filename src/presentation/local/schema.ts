@@ -2,59 +2,63 @@ import z from 'zod';
 
 export const localSchema = z.object({
    name: z.string({
-      required_error: '[name] es requerido',
-      invalid_type_error: '[name] debe ser una cadena',
-   }).max(100,{
-      message: '[name] debe tener como maximo 100 caracteres',
+      required_error: 'El nombre es obligatorio.',
+      invalid_type_error: 'El nombre debe ser un texto válido.',
+   }).max(100, {
+      message: 'El nombre no debe tener más de 100 caracteres.',
    }),
    description: z.string({
-      required_error: '[description] es requerido',
-      invalid_type_error: '[description] debe ser una cadena',
+      required_error: 'La descripción es obligatoria.',
+      invalid_type_error: 'La descripción debe ser un texto válido.',
    }).max(500, {
-      message: '[description] debe tener como maximo 500 caracteres',
+      message: 'La descripción no debe tener más de 500 caracteres.',
    }),
    address: z.string({
-      required_error: '[address] es requerido',
-      invalid_type_error: '[address] debe ser una cadena',
-   }).max(100),
-   phone: z.string({
-      required_error: '[phone] es requerido',
-      invalid_type_error: '[phone] debe ser una cadena',
-   }).regex(/^\d+$/, "El teléfono debe contener solo números").min(6,{
-      message: '[phone] debe tener como minimo 6 dígitos',
-   }).max(10, {
-      message: '[phone] debe tener como maximo 10 dígitos',
+      required_error: 'La dirección es obligatoria.',
+      invalid_type_error: 'La dirección debe ser un texto válido.',
+   }).max(100, {
+      message: 'La dirección no debe tener más de 100 caracteres.',
    }),
+   phone: z.string({
+      required_error: 'El número de teléfono es obligatorio.',
+      invalid_type_error: 'El número de teléfono debe ser un texto válido.',
+   }).regex(/^\d+$/, 'El número de teléfono solo debe contener números.')
+      .min(6, {
+         message: 'El número de teléfono debe tener al menos 6 dígitos.',
+      }).max(10, {
+         message: 'El número de teléfono no debe tener más de 10 dígitos.',
+      }),
    opening_start: z.string({
-      required_error: '[opening_start] es requerido',
-      invalid_type_error: '[opening_start] debe ser una cadena',
-   }).time({
-      message: '[opening_start] debe ser una hora con el formato HH:mm:ss'
+      required_error: 'La hora de apertura es obligatoria.',
+      invalid_type_error: 'La hora de apertura debe ser un texto válido.',
+   }).regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+      message: 'La hora de apertura debe estar en el formato HH:mm:ss.',
    }),
    opening_end: z.string({
-      required_error: '[opening_end] es requerido',
-      invalid_type_error: '[opening_end] debe ser una cadena',
-   }).time({
-      message: '[opening_end] debe ser una hora con el formato HH:mm:ss' 
+      required_error: 'La hora de cierre es obligatoria.',
+      invalid_type_error: 'La hora de cierre debe ser un texto válido.',
+   }).regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, {
+      message: 'La hora de cierre debe estar en el formato HH:mm:ss.',
    }),
    isActivate: z.boolean({
-      required_error: '[isActivate] es requerido',
-      invalid_type_error: '[isActivate] debe ser un booleano',
-   }).default(true),
+      invalid_type_error: 'El estado de activación debe ser verdadero o falso.',
+   }).default(true).optional(),
 
    class_id: z.array(z.number({
-      required_error: '[class_id] es requerido un id de una clase',
-      invalid_type_error: '[class_id] debe ser un arreglo array de id de clases',
+      required_error: 'Es obligatorio seleccionar al menos una clase.',
+      invalid_type_error: 'El ID de la clase debe ser un número.',
    }).int({
-      message: '[class_id] debe ser un arreglo array de id de clases',
+      message: 'El ID de la clase debe ser un número entero.',
    })),
+
    services_id: z.array(z.number({
-      required_error: '[services_id] es requerido un id de un servicios',
-      invalid_type_error: '[services_id] debe ser un arreglo array de id de servicios',
+      required_error: 'Es obligatorio seleccionar al menos un servicio.',
+      invalid_type_error: 'El ID del servicio debe ser un número.',
    }).int({
-      message: '[services_id] debe ser un matriz array de id de servicios',
+      message: 'El ID del servicio debe ser un número entero.',
    })),
-})
+});
+
 
 export const createLocalSchema = localSchema.omit({})
 export const updateLocalSchema = localSchema.partial()
