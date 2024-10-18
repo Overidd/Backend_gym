@@ -76,9 +76,9 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
+*                 messages:
 *                   type: string
-*                   example: Datos de solicitud inválidos
+*                   example: ["Datos de solicitud inválidos"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -150,8 +150,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: Datos de solicitud inválidos
+*                 messages:
+*                   example: ["Datos de solicitud inválidos"]
 *       404:
 *         description: Servicio no encontrado
 *         content:
@@ -228,8 +228,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: Datos de solicitud inválidos
+*                 messages:
+*                   example: ["Datos de solicitud inválidos"]
 *       404:
 *         description: Servicio no encontrado
 *         content:
@@ -336,9 +336,9 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
+*                 messages:
 *                   type: string
-*                   example: Datos de solicitud inválidos
+*                   example:[" Datos de solicitud inválidos"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -410,8 +410,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: Datos de solicitud inválidos
+*                 messages:
+*                   example: ["Datos de solicitud inválidos"]
 *       404:
 *         description: Clase no encontrado
 *         content:
@@ -482,7 +482,7 @@
 *                    type: boolean
 *                    exmaple: true
 *       400:
-*         description: Error de validación de la solicitud
+*         description: ["Error de validación de la solicitud"]
 *         content:
 *           application/json:
 *             schema:

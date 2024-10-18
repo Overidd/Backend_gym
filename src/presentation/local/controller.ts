@@ -182,6 +182,11 @@ export class LocalController {
          });
 
       } catch (error) {
+         if (error instanceof BadRequestException) {
+            return res.status(400).json({
+               messages: error.messages,
+            })
+         }
          if (error instanceof UnauthorizedException) {
             return res.status(401).json({
                message: error.message,

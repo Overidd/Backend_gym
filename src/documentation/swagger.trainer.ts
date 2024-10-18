@@ -163,6 +163,8 @@
 *                   example: "Trainer updated successfully"
 *                 data:
 *                   $ref: '#/components/schemas/Trainer'
+*       400:
+*         description: Datos inválidos
 *       404:
 *         description: Trainer no encontrado
 *       401:
@@ -202,6 +204,8 @@
 *                 data:
 *                   type: object
 *                   example: true
+*       400:
+*         description: Datos inválidos
 *       401:
 *         description: No autorizado
 *       404:

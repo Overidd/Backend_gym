@@ -137,6 +137,15 @@
 *                       - id: 2
 *                         image: "https://example.com/image2.png"
 *                         default: false
+*       400:
+*         description: ID no valido
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 messages:
+*                   example: ["ID no valido"]
 *       404:
 *         description: Local no encontrado
 *         content:
@@ -256,8 +265,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: "Error en los datos enviados"
+*                 messages:
+*                   example: ["Error en los datos enviados"]
 *       401:
 *         description: Acceso no autorizado
 *         content:
@@ -393,8 +402,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: "Error en los datos enviados"
+*                 messages:
+*                   example: ["Error en los datos enviados"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -481,6 +490,15 @@
 *                       type: integer
 *                       description: ID del local asociado a la imagen
 *                       example: 1
+*       400:
+*         description: Solicitud incorrecta (error en la validación de los datos)
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 messages:
+*                   example: ["ID no valido"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -541,6 +559,15 @@
 *                   example: "Local actualizado exitosamente"
 *                 data:
 *                   example: true
+*       400:
+*         description: Solicitud incorrecta (error en la validación de los datos)
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 messages:
+*                   example: ["ID no valido"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -600,6 +627,15 @@
 *                   example: "Local eliminado exitosamente"
 *                 data:
 *                   example: true
+*       400:
+*         description: Solicitud incorrecta (error en la validación de los datos)
+*         content:
+*           application/json:
+*             schema:
+*               type: object
+*               properties:
+*                 messages:
+*                   example: ["ID no valido"] 
 *       401:
 *         description: No autorizado
 *         content:
@@ -681,8 +717,8 @@
  *             schema:
  *               type: object
  *               properties:
- *                 message:
- *                   example: "Datos invalidas"
+ *                 messages:
+ *                   example: ["Datos invalidas"]
  *       401:
  *         description: No autorizado
  *         content:
@@ -757,8 +793,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: "Datos invalidas"
+*                 messages:
+*                   example: ["Datos invalidas"]
 *       401:
 *         description: No autorizado
 *         content:
@@ -826,8 +862,8 @@
 *             schema:
 *               type: object
 *               properties:
-*                 message:
-*                   example: "Datos invalidas"
+*                 messages:
+*                   example: ["Datos invalidas"]
 *       401:
 *         description: No autorizado
 *         content:
