@@ -14,6 +14,8 @@ export class LocalRouter {
       const cloudinary = new Cloudinary(envs.cloud_activate)
       const controller = new LocalController(localRepository, cloudinary);
 
+      router.get('/all/location', controller.getAllLocation);
+
       router.get('/all', controller.getAll);
 
       router.get('/get/:id', controller.getById);
