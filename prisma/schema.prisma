@@ -42,19 +42,31 @@ model Trainer {
 
 //*----------
 model Local {
-  id            Int            @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   name          String
-  description   String         @db.Text
-  address       String
+  description   String          @db.Text
   phone         String
-  opening_start DateTime       @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
-  opening_end   DateTime       @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
-  isActivate    Boolean        @default(true)
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
+  opening_start DateTime        @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
+  opening_end   DateTime        @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
+  isActivate    Boolean         @default(true)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
   images        LocalImages[] // uno a muchos
   clases        LocalClass[] // muchos a muchos
   services      LocalService[] // muchos a muchos
+  LocalLocation LocalLocation[]
+}
+
+model LocalLocation {
+  id        Int    @id @default(autoincrement())
+  address   String
+  city      String
+  country   String
+  zip_code  String
+  latitude  Float // latitud
+  longitude Float // longitud
+  local_id  Int    @unique
+  local     Local  @relation(fields: [local_id], references: [id], onDelete: Cascade)
 }
 
 model LocalImages {
