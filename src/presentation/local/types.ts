@@ -8,13 +8,21 @@ export type ILocalById = {
    id: number;
    name: string;
    description: string;
-   address: string;
    phone: string;
    opening_start: Date | string;
    opening_end: Date | string;
    isActivate: boolean;
    created_at: Date,
    updated_at: Date,
+
+   location: {
+      address: string,
+      city: string,
+      country: string,
+      zip_code: string,
+      latitude: number,
+      longitude: number,
+   },
 
    clases: {
       id: number,
@@ -41,12 +49,16 @@ export type ILocalAll = {
       id: number;
       name: string;
       description: string;
-      address: string;
       phone: string;
       opening_start: Date | string;
       opening_end: Date | string;
       isActivate: boolean;
       image: string,
+      location: {
+         address: string,
+         city: string,
+         country: string,
+      }
       created_at: Date,
       updated_at: Date,
    }[]
@@ -56,13 +68,18 @@ export type ILocalGeneric = {
    id: number;
    name: string;
    description: string;
-   address: string;
    phone: string;
    opening_start: Date | string;
-   opening_end: Date    | string;
+   opening_end: Date | string;
    isActivate: boolean;
-   created_at: Date,
-   updated_at: Date,
+   location?: {
+      address: string,
+      city: string,
+      country: string,
+      zip_code: string,
+      latitude: number,
+      longitude: number,
+   },
    clases?: {
       count: number,
    };
@@ -74,6 +91,8 @@ export type ILocalGeneric = {
    images?: {
       count: number,
    },
+   created_at: Date,
+   updated_at: Date,
 }
 
 export type ILocalImages = {
@@ -87,7 +106,6 @@ export type ILocalDelete = {
    id: number;
    name: string;
    description: string;
-   address: string;
    phone: string;
    opening_start: Date;
    opening_end: Date;
@@ -102,7 +120,17 @@ export type ILocalDelete = {
 export type queryString = {
    services: string[] | string,
    clases: string[] | string,
-   search: string,
+   localtion: string,
    page: string,
    pagesize: string
+}
+
+export type ILocalLocation = {
+   id: number,
+   address: string,
+   city: string,
+   country: string,
+   zip_code: string,
+   latitude: number,
+   longitude: number,
 }
