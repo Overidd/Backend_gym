@@ -78,11 +78,11 @@
 *           example: ["clase1", "clase2"]
 *         description: Filtrar locales por las clases disponibles.
 *       - in: query
-*         name: search
+*         name: localtion
 *         schema:
 *           type: string
 *           example: "local"
-*         description: Buscar locales por nombre, servicios o clases.
+*         description: Buscar por la ubicación.
 *       - in: query
 *         name: page
 *         schema:
