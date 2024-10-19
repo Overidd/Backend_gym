@@ -54,7 +54,7 @@ model Local {
   images        LocalImages[] // uno a muchos
   clases        LocalClass[] // muchos a muchos
   services      LocalService[] // muchos a muchos
-  LocalLocation LocalLocation[]
+  LocalLocation LocalLocation[] // uno a uno
 }
 
 model LocalLocation {
