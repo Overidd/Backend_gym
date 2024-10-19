@@ -1,7 +1,7 @@
 import { ILocalAll, ILocalById, ILocalGeneric, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete, ILocalLocation } from '../../presentation/local'
 
 export interface ILocalRepository {
-   getAll(services: string[], classes: string[], page: number, pagesizew: number): Promise<ILocalAll>;
+   getAll(services: string[], classes: string[], localtion:string,page: number, pagesizew: number): Promise<ILocalAll>;
    getById(id: number): Promise<ILocalById>;
    create(data: CreateLocalDTO): Promise<ILocalGeneric>;
    update(id: number, data: UpdateLocalDTO): Promise<ILocalGeneric>;
