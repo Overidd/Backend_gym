@@ -1,4 +1,57 @@
 
+/**
+ * @swagger
+ * /api/v1/local/all/location:
+ *   get:
+ *     summary: Obtiene un listado de ubicaciones
+ *     description: Retorna una lista de todas las ubicaciones disponibles en el sistema, incluyendo detalles como dirección, ciudad, país, código postal, latitud y longitud.
+ *     tags: 
+ *       - Local
+ *     responses:
+ *       200:
+ *         description: Lista de ubicaciones obtenida exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     description: ID único de la ubicación
+ *                     example: 1
+ *                   address:
+ *                     description: Dirección de la ubicación
+ *                     example: "123 Main St"
+ *                   city:
+ *                     description: Ciudad de la ubicación
+ *                     example: "Lima"
+ *                   country:
+ *                     description: País de la ubicación
+ *                     example: "Peru"
+ *                   zip_code:
+ *                     description: Código postal
+ *                     example: "1000"
+ *                   latitude:
+ *                     format: float
+ *                     description: Latitud de la ubicación
+ *                     example: 40.7128
+ *                   longitude:
+ *                     format: float
+ *                     description: Longitud de la ubicación
+ *                     example: -74.0060
+ *       500:
+ *         description: Error interno del servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error interno del servidor"
+ */
+
 //? router.get('/all', controller.getAll);
 /**
 * @swagger
@@ -63,12 +116,15 @@
 *                       - id: 1
 *                         name: "Gimnasio XYZ"
 *                         description: "Un gimnasio con las mejores instalaciones"
-*                         address: "Calle Principal #123"
-*                         phone: "+1-555-555-5555"
+*                         phone: "123456789"
 *                         opening_start: "10:00:00"
 *                         opening_end: "18:00:00"
 *                         isActivate: true
 *                         image: "https://example.com/image.png"
+*                         location:
+*                           address: "Calle Principal #123"
+*                           city: "Lima"
+*                           country: "Peru"
 *                         created_at: "2024-08-01T12:00:00Z"
 *                         updated_at: "2024-08-01T12:00:00Z"
 *       500:
@@ -113,13 +169,18 @@
 *                     id: 1
 *                     name: "Local ABC"
 *                     description: "Gimnasio de alto rendimiento"
-*                     address: "Calle Principal #123"
 *                     phone: "+1-555-555-5555"
 *                     opening_start: "10:00:00"
 *                     opening_end: "18:00:00"
 *                     isActivate: true
-*                     created_at: "2024-08-01T12:00:00Z"
-*                     updated_at: "2024-08-01T12:00:00Z"
+*                     location:
+*                       id: 1
+*                       address: "Calle Principal #123"
+*                       city: "Lima"
+*                       country: "Peru"
+*                       zip_code: 2000,
+*                       latitude: -12.123456,
+*                       longitude: -12.123456
 *                     clases:
 *                       - id: 1
 *                         name: "Yoga"
@@ -137,6 +198,8 @@
 *                       - id: 2
 *                         image: "https://example.com/image2.png"
 *                         default: false
+*                     created_at: "2024-08-01T12:00:00Z"
+*                     updated_at: "2024-08-01T12:00:00Z"
 *       400:
 *         description: ID no valido
 *         content:
@@ -250,14 +313,22 @@
 *                     opening_start: "10:00:00"
 *                     opening_end: "18:00:00"
 *                     isActivate: true
-*                     created_at: "2024-08-01T12:00:00Z"
-*                     updated_at: "2024-08-01T12:00:00Z"
+*                     location:
+*                       id: 1
+*                       address: "Calle Principal #123"
+*                       city: "Lima"
+*                       country: "Peru"
+*                       zip_code: 2000,
+*                       latitude: -12.123456,
+*                       longitude: -12.123456,
 *                     clases:
 *                       count: 2
 *                     services:
 *                       count: 2
 *                     images:
 *                       count: 1
+*                     created_at: "2024-08-01T12:00:00Z"
+*                     updated_at: "2024-08-01T12:00:00Z"
 *       400:
 *         description: Solicitud incorrecta (error en la validación de los datos)
 *         content:
@@ -387,14 +458,22 @@
 *                     opening_start: "09:00:00"
 *                     opening_end: "20:00:00"
 *                     isActivate: true
-*                     created_at: "2024-08-01T12:00:00Z"
-*                     updated_at: "2024-08-01T12:30:00Z"
+*                     location:
+*                       id: 1
+*                       address: "Calle Principal #123"
+*                       city: "Lima"
+*                       country: "Peru"
+*                       zip_code: 2000,
+*                       latitude: -12.123456,
+*                       longitude: -12.123456,
 *                     clases:
 *                       count: 2
 *                     services:
 *                       count: 2
 *                     images:
 *                       count: 1
+*                     created_at: "2024-08-01T12:00:00Z"
+*                     updated_at: "2024-08-01T12:30:00Z"
 *       400:
 *         description: Solicitud incorrecta (error en la validación de los datos)
 *         content:

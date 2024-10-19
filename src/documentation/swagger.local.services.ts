@@ -337,8 +337,7 @@
 *               type: object
 *               properties:
 *                 messages:
-*                   type: string
-*                   example:[" Datos de solicitud inválidos"]
+*                   example: ["Datos de solicitud inválidos"]
 *       401:
 *         description: No autorizado
 *         content:
