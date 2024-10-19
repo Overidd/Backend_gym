@@ -2,6 +2,11 @@ import z from 'zod';
 import { BadRequestException } from "../../utils"
 import { createLocalSchema, ICreateLocalSchema, IUpdateLocalSchema, updateLocalSchema } from "."
 
+
+const capitalizeFierstLetter = (str: string) => {
+   return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 const localInput = (props: any) => {
    if (typeof props?.isActivate === 'string') {
       props.isActivate = JSON.parse(props.isActivate)
@@ -22,6 +27,12 @@ const localInput = (props: any) => {
          props.services_id = arrayServiceId.map((id) => Number(id))
       }
    };
+
+   Object.values(props).forEach(element => {
+      if (typeof element === 'string') {
+         props[element] = capitalizeFierstLetter(element)
+      }
+   })
    return props;
 }
 
@@ -33,7 +44,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
    const dateNow = `${month + 1}-${day}-${year}`
 
    if (typeof opening_start === 'string') {
-      const dateComplete = dateNow + '-' + opening_start+'Z'
+      const dateComplete = dateNow + '-' + opening_start + 'Z'
       opening_start = new Date(dateComplete)
 
       if (isNaN(opening_start.getTime())) {
@@ -41,7 +52,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
       }
    };
    if (typeof opening_end === 'string') {
-      const dateComplete = dateNow + '-' + opening_end+'Z'
+      const dateComplete = dateNow + '-' + opening_end + 'Z'
       opening_end = new Date(dateComplete)
 
       if (isNaN(opening_start!.getTime())) {
@@ -69,11 +80,16 @@ export class CreateLocalDTO {
    constructor(
       public readonly name: string,
       public readonly description: string,
-      public readonly address: string,
       public readonly phone: string,
       public readonly opening_start: Date,
       public readonly opening_end: Date,
       public readonly isActivate: boolean | undefined,
+      public readonly address: string,
+      public readonly city: string,
+      public readonly country: string,
+      public readonly zip_code: string,
+      public readonly latitude: number,
+      public readonly longitude: number,
       public images: string[] | undefined,
       public readonly class_id: number[],
       public readonly services_id: number[],
@@ -82,15 +98,17 @@ export class CreateLocalDTO {
    static create(props: ICreateLocalSchema, images?: string[]): CreateLocalDTO {
       try {
          const parsedProps = localInput(props);
+
          const validatedProps = createLocalSchema.parse(parsedProps);
+
          const validatedImages = images?.length ? images : undefined;
 
-         const { name, description, address, phone, opening_start, opening_end, isActivate, class_id, services_id } = validatedProps;
+         const { name, description, phone, opening_start, opening_end, isActivate, address, city, country, zip_code, latitude, longitude, class_id, services_id } = validatedProps;
 
          // Validar fechas
          const { date_start, date_end } = validateDate(opening_start, opening_end, true);
 
-         return new CreateLocalDTO(name, description, address, phone, date_start!, date_end!, isActivate, validatedImages, class_id, services_id);
+         return new CreateLocalDTO(name, description, phone, date_start!, date_end!, isActivate, address, city, country, zip_code, latitude, longitude, validatedImages, class_id, services_id);
       } catch (error) {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
@@ -104,11 +122,16 @@ export class UpdateLocalDTO {
    constructor(
       public readonly name?: string,
       public readonly description?: string,
-      public readonly address?: string,
       public readonly phone?: string,
       public readonly opening_start?: Date,
       public readonly opening_end?: Date,
       public readonly isActivate?: boolean,
+      public readonly address?: string,
+      public readonly city?: string,
+      public readonly country?: string,
+      public readonly zip_code?: string,
+      public readonly latitude?: number,
+      public readonly longitude?: number,
       public images?: string[],
       public readonly class_id?: number[],
       public readonly services_id?: number[],
@@ -121,12 +144,12 @@ export class UpdateLocalDTO {
          const validatedProps = updateLocalSchema.parse(parsedProps);
          const validatedImages = images?.length ? images : undefined;
 
-         const { name, description, address, phone, opening_start, opening_end, isActivate, class_id, services_id } = validatedProps;
+         const { name, description, phone, opening_start, opening_end, isActivate, address, city, country, zip_code, latitude, longitude, class_id, services_id } = validatedProps;
 
          // Validar fechas
          const { date_start, date_end } = validateDate(opening_start, opening_end, false);
 
-         return new UpdateLocalDTO(name, description, address, phone, date_start, date_end, isActivate, validatedImages, class_id, services_id);
+         return new UpdateLocalDTO(name, description, phone, date_start, date_end, isActivate, address, city, country, zip_code, latitude, longitude, validatedImages, class_id, services_id);
 
       } catch (error) {
          if (error instanceof z.ZodError) {
