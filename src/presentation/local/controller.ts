@@ -10,9 +10,26 @@ export class LocalController {
       private readonly handlerImage: HandlerImage,
    ) { }
 
+   getAllLocation = async (_req: Request, res: Response) => {
+      try {
+         const locations = await this.localRepository.getAllLocation();
+         return res.status(200).json({
+            message: 'Listado de ubicaciones exitosamente',
+            data: locations
+         })
+
+      } catch (error) {
+         if (error instanceof Error) {
+            return res.status(500).json({
+               message: 'Error inesperado del servidor',
+            })
+         }
+      }
+   }
+
    getAll = async (req: Request, res: Response) => {
       try {
-         let { services, clases, search, page = '1', pagesize = '10' }: queryString = req.query as queryString;
+         let { services, clases, localtion, page = '1', pagesize = '10' }: queryString = req.query as queryString;
 
          const normalizedServices = validateArray(services);
          const normalizedClases = validateArray(clases);
@@ -20,7 +37,7 @@ export class LocalController {
          const skitp: number = parseInt(page) ? parseInt(page) : 1
          const page_size: number = parseInt(pagesize) ? parseInt(pagesize) : 10
 
-         const locals = await this.localRepository.getAll(normalizedServices, normalizedClases, search, skitp, page_size);
+         const locals = await this.localRepository.getAll(normalizedServices, normalizedClases, localtion,skitp, page_size);
 
          return res.status(200).json({
             message: 'Listado de locales exitosamente',
