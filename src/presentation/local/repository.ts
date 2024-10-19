@@ -2,10 +2,24 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../data/postgres";
 import { ILocalRepository } from "../../interfaces/repositories";
 import { BadRequestException, NotFoundException } from "../../utils";
-import { ILocalAll, ILocalById, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete, ILocalGeneric } from ".";
+import { ILocalAll, ILocalById, CreateLocalDTO, UpdateLocalDTO, ILocalImages, ILocalDelete, ILocalGeneric, ILocalLocation } from ".";
 
 export class LocalRepository implements ILocalRepository {
-   async getAll(services: string[], classes: string[], search: string, page: number, pagesize: number): Promise<ILocalAll> {
+   async getAllLocation(): Promise<ILocalLocation[]> {
+      return await prisma.localLocation.findMany({
+         select: {
+            id: true,
+            address: true,
+            city: true,
+            country: true,
+            latitude: true,
+            longitude: true,
+            zip_code: true,
+         }
+      })
+   };
+
+   async getAll(services: string[], classes: string[], localtion: string, page: number, pagesize: number): Promise<ILocalAll> {
 
       const totalItems = await prisma.local.count({
          where: {
@@ -40,39 +54,37 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(search && search?.length > 0 && {
-               OR: [
-                  {
-                     name: {
-                        contains: search,
-                        mode: "insensitive",
-                     },
-                  },
-                  {
-                     clases: {
-                        some: {
-                           class: {
-                              name: {
-                                 contains: search,
-                                 mode: "insensitive",
-                              }
+            ...(localtion !== "" && {
+               location: {
+                  some: {
+                     OR: [
+                        {
+                           address: {
+                              contains: localtion,
+                              mode: "insensitive"
+                           }
+                        },
+                        {
+                           city: {
+                              contains: localtion,
+                              mode: "insensitive"
+                           }
+                        },
+                        {
+                           country: {
+                              contains: localtion,
+                              mode: "insensitive"
+                           }
+                        },
+                        {
+                           zip_code:{
+                              contains: localtion,
+                              mode: "insensitive"
                            }
                         }
-                     }
-                  },
-                  {
-                     services: {
-                        some: {
-                           service: {
-                              name: {
-                                 contains: search,
-                                 mode: "insensitive",
-                              }
-                           }
-                        }
-                     }
+                     ]
                   }
-               ]
+               }
             }),
          },
          include: {
@@ -85,6 +97,13 @@ export class LocalRepository implements ILocalRepository {
                },
                take: 1,
             },
+            location: {
+               select: {
+                  address: true,
+                  city: true,
+                  country: true,
+               }
+            }
          },
          skip: (page - 1) * pagesize,
          take: pagesize,
@@ -96,6 +115,7 @@ export class LocalRepository implements ILocalRepository {
             opening_start: local.opening_start.toISOString().substring(11, 19),
             opening_end: local.opening_end.toISOString().substring(11, 19),
             image: images?.[0]?.image,
+            location: local.location[0]
          };
       });
 
@@ -138,6 +158,8 @@ export class LocalRepository implements ILocalRepository {
                   image: true,
                   default: true,
                }
+            },
+            location: {
             }
          }
       })
@@ -149,11 +171,11 @@ export class LocalRepository implements ILocalRepository {
          id: local.id,
          name: local.name,
          description: local.description,
-         address: local.address,
          phone: local.phone,
          opening_start: local.opening_start.toISOString().substring(11, 19),
          opening_end: local.opening_end.toISOString().substring(11, 19),
          isActivate: local.isActivate,
+         location: local.location[0],
          images: local.images,
          clases: local.clases.map(({ class: { name, id } }) => ({ name, id })),
          services: local.services.map(({ service: { name, id } }) => ({ name, id })),
@@ -164,13 +186,12 @@ export class LocalRepository implements ILocalRepository {
 
    async create(data: CreateLocalDTO): Promise<ILocalGeneric> {
       try {
-         const { newLocal, newLocalClasses, newLocalImages, newLocalServices }
+         const { newLocal, newLocalClasses, newLocalImages, newLocalServices, newLocation }
             = await prisma.$transaction(async (prisma) => {
                const newLocal = await prisma.local.create({
                   data: {
                      name: data.name,
                      description: data.description,
-                     address: data.address,
                      phone: data.phone,
                      opening_start: data.opening_start,
                      opening_end: data.opening_end,
@@ -195,6 +216,18 @@ export class LocalRepository implements ILocalRepository {
                   })
                });
 
+               const newLocation = await prisma.localLocation.create({
+                  data: {
+                     local_id: newLocal.id,
+                     address: data.address,
+                     city: data.city,
+                     country: data.country,
+                     zip_code: data.zip_code,
+                     latitude: data.latitude,
+                     longitude: data.longitude,
+                  }
+               })
+
                const newLocalServices = await prisma.localService.createMany({
                   data: data.services_id!.map((service) => {
                      return {
@@ -218,11 +251,13 @@ export class LocalRepository implements ILocalRepository {
                   newLocalImages,
                   newLocalServices,
                   newLocalClasses,
+                  newLocation,
                }
             })
 
          return {
             ...newLocal,
+            location: newLocation,
             images: newLocalImages,
             clases: newLocalClasses,
             services: newLocalServices,
@@ -314,6 +349,7 @@ export class LocalRepository implements ILocalRepository {
             newLocalImages,
             newLocalClasses,
             newLocalServices,
+            updateLocation,
          }
             = await prisma.$transaction(async (prisma) => {
                const updateLocal = await prisma.local.update({
@@ -323,7 +359,6 @@ export class LocalRepository implements ILocalRepository {
                   data: {
                      name: data.name,
                      description: data.description,
-                     address: data.address,
                      phone: data.phone,
                      opening_start: data.opening_start,
                      opening_end: data.opening_end,
@@ -331,13 +366,25 @@ export class LocalRepository implements ILocalRepository {
                   },
                });
 
+               const updateLocation = await prisma.localLocation.update({
+                  where: {
+                     local_id: id,
+                  },
+                  data: {
+                     address: data.address,
+                     latitude: data.latitude,
+                     longitude: data.longitude,
+                     city: data.city,
+                     country: data.country,
+                  },
+               })
                // Crear nuevas imagenes
                const newLocalImages = await prisma.localImages.createMany({
                   data: data.images?.map((image) => {
                      return {
                         image: image,
                         default: false,
-                        local_id: updateLocal.id
+                        local_id: id
                      }
                   }) || []
                })
@@ -346,7 +393,7 @@ export class LocalRepository implements ILocalRepository {
                const newLocalServices = await prisma.localService.createMany({
                   data: data.services_id?.map((service) => {
                      return {
-                        local_id: updateLocal.id,
+                        local_id: id,
                         service_id: service
                      }
                   }) || []
@@ -356,7 +403,7 @@ export class LocalRepository implements ILocalRepository {
                const newLocalClasses = await prisma.localClass.createMany({
                   data: data.class_id?.map((clase) => {
                      return {
-                        local_id: updateLocal.id,
+                        local_id: id,
                         class_id: clase
                      }
                   }) || []
@@ -366,7 +413,8 @@ export class LocalRepository implements ILocalRepository {
                   updateLocal,
                   newLocalImages,
                   newLocalServices,
-                  newLocalClasses
+                  newLocalClasses,
+                  updateLocation,
                }
             })
 
@@ -374,6 +422,7 @@ export class LocalRepository implements ILocalRepository {
             ...updateLocal,
             opening_start: updateLocal.opening_start.toISOString().substring(11, 19),
             opening_end: updateLocal.opening_end.toISOString().substring(11, 19),
+            location: updateLocation,
             images: newLocalImages,
             clases: newLocalClasses,
             services: newLocalServices,
