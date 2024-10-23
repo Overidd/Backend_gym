@@ -270,7 +270,6 @@ export class LocalRepository implements ILocalRepository {
                throw new NotFoundException('Los servicios o clases seleccionados no existe');
             };
          };
-         console.log(error);
          throw new Error('Error inesperado al crear el local');
       }
    }

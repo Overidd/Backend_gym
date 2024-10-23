@@ -65,10 +65,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
          throw new BadRequestException(["La Hora de apertura no puede ser mayor a la hora de cierre"]);
       }
    }
-   console.log({
-      date_start: opening_start,
-      date_end: opening_end
-   });
+
    return {
       date_start: opening_start,
       date_end: opening_end

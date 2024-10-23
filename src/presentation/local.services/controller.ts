@@ -3,7 +3,6 @@ import { HandlerImage, ILocalServiceRepository } from '../../interfaces';
 import { BadRequestException, NotFoundException, UnauthorizedException, validateId } from '../../utils';
 import { LocalServiceDTO } from './DTO';
 
-
 export class LocalServicesController {
    constructor(
       private readonly localServiceRepository: ILocalServiceRepository,

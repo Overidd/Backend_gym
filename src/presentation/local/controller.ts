@@ -107,7 +107,6 @@ export class LocalController {
             await this.localRepository.validateService(id)
          }))
 
-         console.log(dataDTO);
          // Crear el local
          const newLocal = await this.localRepository.create(dataDTO);
          return res.status(201).json({
@@ -131,7 +130,6 @@ export class LocalController {
             })
          }
          if (error instanceof Error) {
-            console.error(error);
             return res.status(500).json({
                message: 'Error inesperado del servidor',
             })

@@ -1,5 +1,4 @@
-// import {Express} from 'express';
-import cloudinary from 'cloudinary';
+import { cloudinary } from '../config/cloudinary.config';
 import { Readable } from "stream";
 // import { ErrorUploadImage } from '../utils';
 import { HandlerImage } from '../interfaces';
@@ -12,23 +11,17 @@ export class Cloudinary implements HandlerImage {
    public uploadImage = (file: Express.Multer.File, folder: string): Promise<string> => {
       return new Promise((resolve, reject) => {
          try {
-            if (!this.isUploadImage) return resolve(file?.originalname || 'imagen sin nombre') ;
+            if (!this.isUploadImage) return resolve(file?.originalname || 'imagen sin nombre');
 
-            const stream = cloudinary.v2.uploader.upload_stream(
-               { folder: folder }, // Especifica la carpeta en Cloudinary
+            const stream = cloudinary.uploader.upload_stream({ folder: folder },
                (error, result) => {
-                  if (error) {
-                     reject(new Error); // Rechaza la promesa con el error
-                  } else {
-                     resolve(result!.secure_url);
-                  }
-               }
-            );
+                  if (error) return reject(new Error(`Error del servidor al subir la imagen`));
+                  resolve(result?.secure_url || 'Error: URL no disponible');
+               });
 
-            // Convierte el buffer a un stream y lo sube
             const readableStream = new Readable();
             readableStream.push(file.buffer);
-            readableStream.push(undefined);
+            readableStream.push(null);
             readableStream.pipe(stream);
 
          } catch (error) {
@@ -46,7 +39,7 @@ export class Cloudinary implements HandlerImage {
       );
    }
 
-   
+
    public publicId = (url: string): string | null => {
       const urlParts = url.split('/');
       const fileNameWithExtension = urlParts[urlParts.length - 1];
@@ -55,15 +48,15 @@ export class Cloudinary implements HandlerImage {
 
       return `${folderPath.split('/')[1]}/${publicId}`;
    }
-   
+
    public deleteImage = (url: string): Promise<boolean> => {
       return new Promise((resolve, _reject) => {
          if (!url) {
             resolve(false);
          }
          const publicId = this.publicId(url);
-   
-         cloudinary.v2.uploader.destroy(publicId!, (error, _result) => {
+
+         cloudinary.uploader.destroy(publicId!, (error, _result) => {
             if (error) {
                resolve(false);
             } else {
