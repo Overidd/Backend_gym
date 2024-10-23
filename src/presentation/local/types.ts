@@ -7,7 +7,7 @@ export type IUpdateLocalSchema = z.infer<typeof updateLocalSchema>
 export type ILocalById = {
    id: number;
    name: string;
-   description: string;
+   description?: string;
    phone: string;
    opening_start: Date | string;
    opening_end: Date | string;
@@ -48,7 +48,7 @@ export type ILocalAll = {
    locals: {
       id: number;
       name: string;
-      description: string;
+      description?: string;
       phone: string;
       opening_start: Date | string;
       opening_end: Date | string;
@@ -67,7 +67,7 @@ export type ILocalAll = {
 export type ILocalGeneric = {
    id: number;
    name: string;
-   description: string;
+   description?: string;
    phone: string;
    opening_start: Date | string;
    opening_end: Date | string;
@@ -105,7 +105,7 @@ export type ILocalImages = {
 export type ILocalDelete = {
    id: number;
    name: string;
-   description: string;
+   description?: string;
    phone: string;
    opening_start: Date;
    opening_end: Date;

@@ -44,7 +44,7 @@ model Trainer {
 model Local {
   id            Int             @id @default(autoincrement())
   name          String
-  description   String          @db.Text
+  description   String?          @db.Text
   phone         String
   opening_start DateTime        @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
   opening_end   DateTime        @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)

@@ -251,7 +251,7 @@
 *               description:
 *                 type: string
 *                 description: Descripción del local
-*                 example: "Gimnasio de alto rendimiento"
+*                 example: "Gimnasio de alto rendimiento (opcional)"
 *               phone:
 *                 type: string
 *                 description: Teléfono de contacto

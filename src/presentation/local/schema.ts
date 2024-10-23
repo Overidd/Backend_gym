@@ -12,7 +12,7 @@ export const localSchema = z.object({
       invalid_type_error: 'La descripción debe ser un texto válido.',
    }).max(500, {
       message: 'La descripción no debe tener más de 500 caracteres.',
-   }),
+   }).optional(),
 
    phone: z.string({
       required_error: 'El número de teléfono es requerido.',

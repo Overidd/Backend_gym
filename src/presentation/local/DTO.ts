@@ -79,7 +79,7 @@ const validateDate = (opening_start?: string | Date, opening_end?: string | Date
 export class CreateLocalDTO {
    constructor(
       public readonly name: string,
-      public readonly description: string,
+      public readonly description: string | undefined,
       public readonly phone: string,
       public readonly opening_start: Date,
       public readonly opening_end: Date,
