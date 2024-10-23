@@ -97,7 +97,7 @@ model LocalService {
 model ClassGym {
   id          Int          @id @default(autoincrement())
   name        String
-  icon        String       @db.Text
+  icon        String?       @db.Text
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   local_class LocalClass[]
@@ -106,7 +106,7 @@ model ClassGym {
 model ServiceGym {
   id            Int            @id @default(autoincrement())
   name          String
-  icon          String         @db.Text
+  icon          String?         @db.Text
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   local_service LocalService[]

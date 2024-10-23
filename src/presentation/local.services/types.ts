@@ -7,7 +7,7 @@ export type IUpdateLocalServiceSchema = z.infer<typeof updatelocalServiceSchema>
 export type IServices = {
    id: number;
    name: string;
-   icon: string;
+   icon: string | null;
    created_at: Date,
    updated_at: Date
 }

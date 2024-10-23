@@ -33,14 +33,13 @@ export class LocalServicesController {
          const body = req.body;
          const icon = req.file as Express.Multer.File;
 
-         if (!icon) {
-            throw new BadRequestException(['Debes subir un icono']);
-         }
          const createDTO = LocalServiceDTO.create(body);
 
-         // Subir el icon a cloudinary
-         const iconUrl = await this.handlerImage.uploadImage(icon, this.nameFolder);
-         createDTO.icon = iconUrl;
+         if (icon) {
+            // Subir el icon a cloudinary
+            const iconUrl = await this.handlerImage.uploadImage(icon, this.nameFolder);
+            createDTO.icon = iconUrl;
+         }
 
          const newService = await this.localServiceRepository.create(createDTO);
 
@@ -87,7 +86,7 @@ export class LocalServicesController {
 
          // Eliminar el icono de cloudinary en el caso de recibir un nuevo icono
          if (dataPast.icon && typeof updateDTO.icon == 'string') {
-            const resultDestroyImage  = await this.handlerImage.deleteImage(dataPast.icon);
+            const resultDestroyImage = await this.handlerImage.deleteImage(dataPast.icon);
 
             if (!resultDestroyImage) {
                return res.status(200).json({
