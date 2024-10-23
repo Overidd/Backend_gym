@@ -27,6 +27,12 @@ const localInput = (props: any) => {
          props.services_id = arrayServiceId.map((id) => Number(id))
       }
    };
+   if (typeof props?.latitude === 'string') {
+      props.latitude = parseFloat(props.latitude)
+   };
+   if (typeof props?.longitude === 'string') {
+      props.longitude = parseFloat(props.longitude)
+   }
 
    Object.values(props).forEach(element => {
       if (typeof element === 'string') {
