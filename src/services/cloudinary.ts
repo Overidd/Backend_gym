@@ -15,6 +15,7 @@ export class Cloudinary implements HandlerImage {
 
             const stream = cloudinary.uploader.upload_stream({ folder: folder },
                (error, result) => {
+                  console.log(error);
                   if (error) return reject(new Error(`Error del servidor al subir la imagen`));
                   resolve(result?.secure_url || 'Error: URL no disponible');
                });
@@ -25,6 +26,7 @@ export class Cloudinary implements HandlerImage {
             readableStream.pipe(stream);
 
          } catch (error) {
+            console.log(error);
             throw new Error('Error inesperado al subir la imagen');
          }
       });
