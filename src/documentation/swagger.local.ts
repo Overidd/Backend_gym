@@ -286,6 +286,14 @@
 *                 type: integer
 *                 description: Código postal del local
 *                 example: 2000
+*               latitude:
+*                 type: number
+*                 description: Latitud del local
+*                 example: -12.123456
+*               longitude:
+*                 type: number
+*                 description: Longitud del local
+*                 example: -12.123456
 *               services_id:
 *                 type: array
 *                 items:
