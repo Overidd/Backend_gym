@@ -54,7 +54,7 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(localtion !== "" && {
+            ...(typeof localtion != "undefined" && localtion !== "" && {
                location: {
                   some: {
                      OR: [

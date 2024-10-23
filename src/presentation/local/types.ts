@@ -120,7 +120,7 @@ export type ILocalDelete = {
 export type queryString = {
    services: string[] | string,
    clases: string[] | string,
-   localtion: string,
+   search: string,
    page: string,
    pagesize: string
 }

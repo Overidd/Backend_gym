@@ -29,15 +29,19 @@ export class LocalController {
 
    getAll = async (req: Request, res: Response) => {
       try {
-         let { services, clases, localtion, page = '1', pagesize = '10' }: queryString = req.query as queryString;
+         let { services, clases, search: localtion, page = '1', pagesize = '10' }: queryString = req.query as queryString;
 
          const normalizedServices = validateArray(services);
          const normalizedClases = validateArray(clases);
 
+         if (typeof localtion == 'undefined') {
+            localtion = ''
+         }
+
          const skitp: number = parseInt(page) ? parseInt(page) : 1
          const page_size: number = parseInt(pagesize) ? parseInt(pagesize) : 10
 
-         const locals = await this.localRepository.getAll(normalizedServices, normalizedClases, localtion,skitp, page_size);
+         const locals = await this.localRepository.getAll(normalizedServices, normalizedClases, localtion, skitp, page_size);
 
          return res.status(200).json({
             message: 'Listado de locales exitosamente',
