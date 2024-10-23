@@ -252,10 +252,6 @@
 *                 type: string
 *                 description: Descripción del local
 *                 example: "Gimnasio de alto rendimiento"
-*               address:
-*                 type: string
-*                 description: Dirección del local
-*                 example: "Calle Principal #123"
 *               phone:
 *                 type: string
 *                 description: Teléfono de contacto
@@ -274,6 +270,22 @@
 *                 type: boolean
 *                 description: Estado de activación del local
 *                 example: true
+*               address:
+*                 type: string
+*                 description: Dirección del local
+*                 example: "Calle Principal #123" 
+*               city:
+*                 type: string
+*                 description: Ciudad del local
+*                 example: "Lima"
+*               country:
+*                 type: string
+*                 description: País del local
+*                 example: "Peru"
+*               zip_code:  
+*                 type: integer
+*                 description: Código postal del local
+*                 example: 2000
 *               services_id:
 *                 type: array
 *                 items:
