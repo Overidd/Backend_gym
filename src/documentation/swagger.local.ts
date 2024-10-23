@@ -250,8 +250,8 @@
 *                 example: "Local ABC"
 *               description:
 *                 type: string
-*                 description: Descripción del local
-*                 example: "Gimnasio de alto rendimiento (opcional)"
+*                 description: Descripción del local (opcional)
+*                 example: "Gimnasio de alto rendimiento"
 *               phone:
 *                 type: string
 *                 description: Teléfono de contacto

@@ -55,7 +55,7 @@
 *               icon:
 *                 type: string
 *                 format: binary
-*                 description: Icono del servicio (archivo de imagen)
+*                 description: Icono del servicio (archivo de imagen) (opcional)
 *     responses:
 *       201:
 *         description: Servicio creado exitosamente
@@ -315,7 +315,7 @@
 *               icon:
 *                 type: string
 *                 format: binary
-*                 description: Icono del clase (archivo de imagen)
+*                 description: Icono del clase (archivo de imagen) (opcional)
 *     responses:
 *       201:
 *         description: clase creado exitosamente
