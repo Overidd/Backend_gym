@@ -78,7 +78,7 @@
 *           example: ["clase1", "clase2"]
 *         description: Filtrar locales por las clases disponibles.
 *       - in: query
-*         name: localtion
+*         name: search
 *         schema:
 *           type: string
 *           example: "local"

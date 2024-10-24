@@ -19,7 +19,7 @@ export class LocalRepository implements ILocalRepository {
       })
    };
 
-   async getAll(services: string[], classes: string[], localtion: string, page: number, pagesize: number): Promise<ILocalAll> {
+   async getAll(services: string[], classes: string[], search: string[], page: number, pagesize: number): Promise<ILocalAll> {
 
       const totalItems = await prisma.local.count({
          where: {
@@ -54,38 +54,40 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(typeof localtion != "undefined" && localtion !== "" && {
+            ...(search.length > 0 && {
                location: {
                   some: {
-                     OR: [
-                        {
-                           address: {
-                              contains: localtion,
-                              mode: "insensitive"
+                     OR: search.map(term => ({
+                        OR: [
+                           {
+                              address: {
+                                 contains: term,
+                                 mode: "insensitive"
+                              }
+                           },
+                           {
+                              city: {
+                                 contains: term,
+                                 mode: "insensitive"
+                              }
+                           },
+                           {
+                              country: {
+                                 contains: term,
+                                 mode: "insensitive"
+                              }
+                           },
+                           {
+                              zip_code: {
+                                 contains: term,
+                                 mode: "insensitive"
+                              }
                            }
-                        },
-                        {
-                           city: {
-                              contains: localtion,
-                              mode: "insensitive"
-                           }
-                        },
-                        {
-                           country: {
-                              contains: localtion,
-                              mode: "insensitive"
-                           }
-                        },
-                        {
-                           zip_code:{
-                              contains: localtion,
-                              mode: "insensitive"
-                           }
-                        }
-                     ]
+                        ]
+                     }))
                   }
                }
-            }),
+            })
          },
          include: {
             images: {
@@ -170,7 +172,7 @@ export class LocalRepository implements ILocalRepository {
       return {
          id: local.id,
          name: local.name,
-         description: local?.description?? undefined,
+         description: local?.description ?? undefined,
          phone: local.phone,
          opening_start: local.opening_start.toISOString().substring(11, 19),
          opening_end: local.opening_end.toISOString().substring(11, 19),
