@@ -118,7 +118,6 @@ export class LocalRepository implements ILocalRepository {
             opening_end: local.opening_end.toISOString().substring(11, 19),
             image: images?.[0]?.image,
             location: local.location[0],
-            description: local.description ?? null
          };
       });
 
@@ -173,7 +172,7 @@ export class LocalRepository implements ILocalRepository {
       return {
          id: local.id,
          name: local.name,
-         description: local?.description ?? undefined,
+         description: local?.description ?? null,
          phone: local.phone,
          opening_start: local.opening_start.toISOString().substring(11, 19),
          opening_end: local.opening_end.toISOString().substring(11, 19),
