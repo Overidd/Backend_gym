@@ -117,7 +117,8 @@ export class LocalRepository implements ILocalRepository {
             opening_start: local.opening_start.toISOString().substring(11, 19),
             opening_end: local.opening_end.toISOString().substring(11, 19),
             image: images?.[0]?.image,
-            location: local.location[0]
+            location: local.location[0],
+            description: local.description ?? null
          };
       });
 
