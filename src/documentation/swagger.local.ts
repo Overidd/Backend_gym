@@ -184,13 +184,17 @@
 *                     clases:
 *                       - id: 1
 *                         name: "Yoga"
+*                         icon: "https://example.com/icon2.png"
 *                       - id: 2
 *                         name: "Pilates"
+*                         icon: "https://example.com/icon2.png"
 *                     services:
 *                       - id: 1
 *                         name: "Aire Acondicionado"
+*                         icon: "https://example.com/icon2.png"
 *                       - id: 2
 *                         name: "WiFi"
+*                         icon: "https://example.com/icon2.png"
 *                     images:
 *                       - id: 1
 *                         image: "https://example.com/image1.png"

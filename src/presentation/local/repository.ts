@@ -139,6 +139,7 @@ export class LocalRepository implements ILocalRepository {
                   class: {
                      select: {
                         id: true,
+                        icon: true,
                         name: true
                      }
                   }
@@ -149,6 +150,7 @@ export class LocalRepository implements ILocalRepository {
                   service: {
                      select: {
                         id: true,
+                        icon: true,
                         name: true
                      }
                   }
