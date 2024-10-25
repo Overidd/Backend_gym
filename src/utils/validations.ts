@@ -6,6 +6,8 @@ export const validateId = (id: string): number => {
       throw new BadRequestException(['El ID proporcionado no es válido']);
    }
    return parsedId
-} 
+}
 
-export const validateArray = (value: string | string[]) => (typeof value === 'string' ? [value] : []);
+export const validateArray = (value: string | string[]) => {
+   return (typeof value === 'string' ? value ? Array(value) : [] : value);
+}

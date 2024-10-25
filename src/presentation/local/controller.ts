@@ -33,7 +33,7 @@ export class LocalController {
 
          const normalizedServices = validateArray(service);
          const normalizedClases = validateArray(clase);
-
+         
          if (typeof search == 'undefined') {
             search = ''
          }
