@@ -29,10 +29,10 @@ export class LocalController {
 
    getAll = async (req: Request, res: Response) => {
       try {
-         let { services, clases, search, page = '1', pagesize = '10' }: queryString = req.query as queryString;
+         let { service, clase, search, page = '1', pagesize = '10' }: queryString = req.query as queryString;
 
-         const normalizedServices = validateArray(services);
-         const normalizedClases = validateArray(clases);
+         const normalizedServices = validateArray(service);
+         const normalizedClases = validateArray(clase);
 
          if (typeof search == 'undefined') {
             search = ''

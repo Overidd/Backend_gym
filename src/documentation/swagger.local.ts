@@ -62,7 +62,7 @@
 *     tags: [Local]
 *     parameters:
 *       - in: query
-*         name: services
+*         name: service
 *         schema:
 *           type: array
 *           items:
@@ -70,7 +70,7 @@
 *           example: ["aire", "calefaccion"]
 *         description: Filtrar locales por los servicios que ofrecen.
 *       - in: query
-*         name: clases
+*         name: clase
 *         schema:
 *           type: array
 *           items:

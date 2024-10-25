@@ -19,7 +19,7 @@ export class LocalRepository implements ILocalRepository {
       })
    };
 
-   async getAll(services: string[], classes: string[], search: string[], page: number, pagesize: number): Promise<ILocalAll> {
+   async getAll(services: string[], clases: string[], search: string[], page: number, pagesize: number): Promise<ILocalAll> {
 
       const totalItems = await prisma.local.count({
          where: {
@@ -42,12 +42,12 @@ export class LocalRepository implements ILocalRepository {
                   }
                }
             }),
-            ...(classes?.length > 0 && {
+            ...(clases?.length > 0 && {
                clases: {
                   some: {
                      class: {
                         name: {
-                           in: classes,
+                           in: clases,
                            mode: "insensitive"
                         }
                      }

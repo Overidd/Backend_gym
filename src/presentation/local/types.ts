@@ -118,8 +118,8 @@ export type ILocalDelete = {
 }
 
 export type queryString = {
-   services: string[] | string,
-   clases: string[] | string,
+   service: string[] | string,
+   clase: string[] | string,
    search: string,
    page: string,
    pagesize: string
