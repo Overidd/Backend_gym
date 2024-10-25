@@ -26,12 +26,14 @@ export type ILocalById = {
 
    clases: {
       id: number,
-      name: string
+      name: string,
+      icon: string | null,
    }[];
 
    services: {
       id: number,
-      name: string
+      name: string,
+      icon: string | null,
    }[];
 
    images: {

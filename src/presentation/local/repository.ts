@@ -181,8 +181,8 @@ export class LocalRepository implements ILocalRepository {
          isActivate: local.isActivate,
          location: local.location[0],
          images: local.images,
-         clases: local.clases.map(({ class: { name, id } }) => ({ name, id })),
-         services: local.services.map(({ service: { name, id } }) => ({ name, id })),
+         clases: local.clases.map(clase => clase.class),
+         services: local.services.map(service => service.service),
          created_at: local.created_at,
          updated_at: local.updated_at,
       }
