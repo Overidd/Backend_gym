@@ -44,7 +44,7 @@ model Trainer {
 model Local {
   id            Int             @id @default(autoincrement())
   name          String
-  description   String?          @db.Text
+  description   String?         @db.Text
   phone         String
   opening_start DateTime        @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
   opening_end   DateTime        @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
@@ -97,7 +97,7 @@ model LocalService {
 model ClassGym {
   id          Int          @id @default(autoincrement())
   name        String
-  icon        String?       @db.Text
+  icon        String?      @db.Text
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   local_class LocalClass[]
@@ -106,8 +106,64 @@ model ClassGym {
 model ServiceGym {
   id            Int            @id @default(autoincrement())
   name          String
-  icon          String?         @db.Text
+  icon          String?        @db.Text
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   local_service LocalService[]
+}
+
+//* ----------USER----------
+model User {
+  id                     Int             @id @default(autoincrement())
+  email                  String          @unique
+  password               String          @db.Text
+  first_name             String
+  last_name              String
+  is_active              Boolean?        @default(true)
+  is_confirmed           Boolean?        @default(false)
+  is_Google_account      Boolean?        @default(false)
+  picture                String?         @db.Text
+  created_at             DateTime        @default(now())
+  updated_at             DateTime        @updatedAt
+  MembershipPay MembershipPay[]
+}
+
+//* ----------PLANS----------
+model Membership {
+  id                 String          @id @unique @default(uuid())
+  duration_in_months Int             @unique
+  name               String
+  price              Float
+  description        String?         @db.Text
+  discount           Float?          @default(0)
+  price_total        Float?          @default(0)
+  status             Boolean?        @default(true)
+  created_at         DateTime        @default(now())
+  updated_at         DateTime        @updatedAt
+  MembershipPay      MembershipPay[]
+}
+
+model MembershipPay {
+  id               Int        @id @default(autoincrement())
+  membership_start DateTime   @db.Date()
+  membership_end   DateTime   @db.Date()
+  is_active        Boolean
+  access_code      String
+  user_id          Int
+  user             User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  plans_id         String
+  membership       Membership @relation(fields: [plans_id], references: [id], onDelete: Cascade)
+  created_at       DateTime   @default(now())
+  Payment          Payment[]
+}
+
+model Payment {
+  id                     Int           @id @default(autoincrement())
+  amount                 Float
+  payment_date           DateTime
+  payment_method         String
+  membership_id          Int
+  transaction_membership MembershipPay @relation(fields: [membership_id], references: [id], onDelete: Cascade)
+  created_at             DateTime      @default(now())
+  updated_at             DateTime      @updatedAt
 }
