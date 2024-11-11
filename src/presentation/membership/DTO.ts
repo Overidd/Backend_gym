@@ -11,7 +11,6 @@ export class DTOMembership {
       public readonly price?: number,
       public readonly description?: string | undefined,
       public readonly discount?: number | undefined,
-      public readonly price_total?: number | undefined,
       public readonly status?: boolean | undefined,
    ) { }
 
@@ -25,7 +24,6 @@ export class DTOMembership {
             validateDate.price!,
             validateDate.description,
             validateDate.discount,
-            validateDate.price_total,
             validateDate.status,
          )
       } catch (error) {
@@ -46,7 +44,6 @@ export class DTOMembership {
             validateDate.price,
             validateDate.description,
             validateDate.discount,
-            validateDate.price_total,
             validateDate.status,
          )
       } catch (error) {

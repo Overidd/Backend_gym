@@ -114,56 +114,71 @@ model ServiceGym {
 
 //* ----------USER----------
 model User {
-  id                     Int             @id @default(autoincrement())
-  email                  String          @unique
-  password               String          @db.Text
-  first_name             String
-  last_name              String
-  is_active              Boolean?        @default(true)
-  is_confirmed           Boolean?        @default(false)
-  is_Google_account      Boolean?        @default(false)
-  picture                String?         @db.Text
-  created_at             DateTime        @default(now())
-  updated_at             DateTime        @updatedAt
-  MembershipPay MembershipPay[]
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
+  password          String         @db.Text
+  is_user_temp      Boolean        @default(false)
+  first_name        String
+  last_name         String
+  is_active         Boolean        @default(true)
+  is_confirmed      Boolean        @default(false)
+  is_google_account Boolean        @default(false)
+  imagen            String?        @db.Text
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  Subscription      Subscription[]
 }
 
 //* ----------PLANS----------
 model Membership {
-  id                 String          @id @unique @default(uuid())
-  duration_in_months Int             @unique
+  id                 String         @id @unique @default(uuid())
+  duration_in_months Int            @unique
   name               String
   price              Float
-  description        String?         @db.Text
-  discount           Float?          @default(0)
-  price_total        Float?          @default(0)
-  status             Boolean?        @default(true)
-  created_at         DateTime        @default(now())
-  updated_at         DateTime        @updatedAt
-  MembershipPay      MembershipPay[]
+  description        String?        @db.Text
+  discount           Float?         @default(0)
+  price_total        Float?
+  service_id         String
+  status             Boolean?       @default(true)
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  Subscription       Subscription[]
 }
 
-model MembershipPay {
+enum statusEnum {
+  PENDING
+  PAGADO
+  CANCELADO
+  VENCIDO
+  ACTIVO
+}
+
+model Subscription {
   id               Int        @id @default(autoincrement())
-  membership_start DateTime   @db.Date()
   membership_end   DateTime   @db.Date()
-  is_active        Boolean
-  access_code      String
+  membership_start DateTime   @db.Date()
+  is_active        Boolean    @default(true)
+  access_code      String?
+  plan_id          String     @unique
+  subscription_id  String?
+  status           statusEnum
   user_id          Int
   user             User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  plans_id         String
-  membership       Membership @relation(fields: [plans_id], references: [id], onDelete: Cascade)
+  membership_id    String
+  membership       Membership @relation(fields: [membership_id], references: [id], onDelete: Cascade)
   created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
   Payment          Payment[]
 }
 
 model Payment {
-  id                     Int           @id @default(autoincrement())
+  id                     Int          @id @default(autoincrement())
   amount                 Float
   payment_date           DateTime
   payment_method         String
+  currency_code          String
   membership_id          Int
-  transaction_membership MembershipPay @relation(fields: [membership_id], references: [id], onDelete: Cascade)
-  created_at             DateTime      @default(now())
-  updated_at             DateTime      @updatedAt
+  transaction_membership Subscription @relation(fields: [membership_id], references: [id], onDelete: Cascade)
+  created_at             DateTime     @default(now())
+  updated_at             DateTime     @updatedAt
 }

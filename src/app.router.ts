@@ -4,6 +4,7 @@ import { TrainerRouter } from './presentation/trainer';
 import { LocalRouter } from './presentation/local';
 import { LocalClaseRouter, LocalServiceRouter } from './presentation/local.services';
 import { RouterMembership } from './presentation/membership';
+import { RouterSubscription } from './presentation/subscription/router';
 
 export class AppRouter {
 
@@ -16,6 +17,7 @@ export class AppRouter {
       const localServiceRouter = new LocalServiceRouter()
       const localClaseRouter = new LocalClaseRouter()
       const routerMembership = new RouterMembership()
+      const routerSubscription = new RouterSubscription()
 
       
       router.use('/api/v1/product', productRouter.router);
@@ -29,6 +31,8 @@ export class AppRouter {
       router.use('/api/v1/clase', localClaseRouter.router);
 
       router.use('/api/v1/membership', routerMembership.router);
+
+      router.use('/api/v1/subscription', routerSubscription.router);
 
       return router
    }

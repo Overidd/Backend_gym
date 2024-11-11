@@ -26,7 +26,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/presentation/products/product.router.ts', './src/documentation/swagger.trainer.ts', 'src/documentation/swagger.local.ts', 'src/documentation/swagger.local.services.ts', 'src/documentation/swagger.membership.ts'],
+  apis: ['./src/presentation/products/product.router.ts', './src/documentation/swagger.trainer.ts', 'src/documentation/swagger.local.ts', 'src/documentation/swagger.local.services.ts', 'src/documentation/swagger.membership.ts', 'src/documentation/swagger.subscription.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

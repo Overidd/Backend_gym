@@ -9,6 +9,7 @@ export type IResGenaral = {
    duration_in_months: number;
    name: string;
    price: number;
+   service_id: string;
    description?: string | undefined | null;
    discount?: number | undefined | null;
    price_total?: number | undefined | null;

@@ -45,6 +45,17 @@ export class ErrorDate extends Error {
    }
 }
 
+export class InternalServerError extends Error {
+   public statusCode: number;
+   public messages: string[];
+   constructor(message: string[], code?: number) {
+      super(message.join(', '));
+      this.name = "InternalServerError";
+      this.statusCode = code || 500;
+      this.messages = message;
+   }
+}
+
 export class ErrorUploadImage extends Error {
    public statusCode: number;
    constructor(message: string) {

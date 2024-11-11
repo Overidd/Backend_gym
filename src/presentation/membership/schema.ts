@@ -25,19 +25,13 @@ const MembershipSchema = z.object({
    }).min(0,{
       message: 'El precio no puede ser negativo',
    }),
+   
    discount: z.number({
       required_error: 'El descuento es requerido',
       invalid_type_error: 'El descuento debe ser un número decimal con hasta dos decimales',
    }).min(0,{
       message: 'El descuento no puede ser negativo',
    }).int().optional(),
-
-   price_total: z.number({
-      required_error: 'El precio total es requerido',
-      invalid_type_error: 'El precio total debe ser un número decimal con hasta dos decimales',
-   }).min(0,{
-      message: 'El precio total no puede ser negativo',
-   }).optional(),
 
    status: z.boolean({
       required_error: 'El estado es requerido',

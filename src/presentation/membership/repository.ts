@@ -7,6 +7,18 @@ import { IResGenaral } from "./types";
 import { DTOMembership } from "./DTO";
 
 export class RepositoryMembership implements IRepositoryMembership {
+   async validateMembership(id: string): Promise<IResGenaral | null> {
+      try {
+         const membership = await prisma.membership.findUnique({
+            where: {
+               id: id
+            },
+         })
+         return membership
+      } catch (error) {
+         throw new Error('Error inesperado del servidor');
+      }
+   }
    async getAll(): Promise<IResGenaral[]> {
       const memberships = await prisma.membership.findMany({
          where: {
@@ -16,18 +28,24 @@ export class RepositoryMembership implements IRepositoryMembership {
 
       return memberships
    }
-   async create(data: DTOMembership): Promise<IResGenaral> {
+   async create(data: DTOMembership, serviceId: string): Promise<IResGenaral> {
       try {
+         let priceTotal = undefined
+         if (data.discount && data.discount > 0) {
+            priceTotal = data.price! - (data.price! * data.discount / 100)
+         }
+
          const newMembership = await prisma.membership.create({
             data: {
                duration_in_months: data.duration_in_months!,
                name: data.name!,
                price: data.price!,
                description: data.description!,
-               discount: data.discount!,
-               price_total: data.price_total!,
+               discount: data.discount,
+               price_total: priceTotal,
                status: data.status!,
-            }
+               service_id: serviceId,
+            },
          })
 
          return newMembership
@@ -40,13 +58,15 @@ export class RepositoryMembership implements IRepositoryMembership {
          throw new Error('Error inesperado del servidor')
       }
    }
-   async update(id: string, data: DTOMembership): Promise<IResGenaral> {
+   async update(id: string, data: DTOMembership, serviceId?: string): Promise<IResGenaral> {
       try {
-         const isMembershipExist = await prisma.membership.findUnique({
-            where: {
-               id: id,
-            }
-         })
+
+         let priceTotal = undefined
+         if (data.discount && data.discount > 0) {
+            priceTotal = data.price! - (data.price! * data.discount / 100)
+         }
+
+         const isMembershipExist = await this.validateMembership(id)
          if (!isMembershipExist) {
             throw new BadRequestException(['No existe el plan']);
          }
@@ -59,12 +79,13 @@ export class RepositoryMembership implements IRepositoryMembership {
             },
             data: {
                duration_in_months: data.duration_in_months!,
-               name: data.name!,
-               price: data.price!,
-               description: data.description!,
-               discount: data.discount!,
-               price_total: data.price_total!,
-            }
+               name: data.name,
+               price: data.price,
+               price_total: priceTotal,
+               description: data.description,
+               discount: data.discount,
+               service_id: serviceId,
+            },
          })
 
          return updateMembership

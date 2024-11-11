@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: sans-serif">
+   <main>
+      <img src="https://res.cloudinary.com/dvtl2wcia/image/upload/v1731197714/Maquinaria-de-un-gimnasio_z3qszs.png"
+         alt="Imagen de gimnasio" style="width: 100%; height: 10rem; object-fit: cover; object-position: center;">
+      <h1 style="font-size: 1.6rem; font-weight: bold; text-align: center; color: #000;">
+         Bienvenido, <%= name %> ¡Ponte mamadísimo!💪
+      </h1>
+      <section style="text-align: center;">
+         <p style="font-size: 1.4rem; font-weight: 900;  color: #123;">Tu código de acceso:</p>
+         <small style="color: #000a; font-size: 6rem; font-weight: bold;">
+            <%= codeAccess %>
+         </small>
+      </section>
+      <section style="text-align: center; color: #000;">
+         <h4 style="color: #123; font-size: 1.4rem;">Tus credenciales</h4>
+         <div style="margin-bottom: 5rem;">
+            <table cellpadding="10"
+               style="margin: 0 auto; border-collapse: collapse; border-radius: 10px; overflow: hidden;">
+               <tr>
+                  <td
+                     style="border-bottom: 1px solid #123; font-size: 1.1rem; font-weight: bold; color: #000a;text-align: left;">
+                     Correo:</td>
+                  <td
+                     style="border-bottom: 1px solid #123; font-size: 1.1rem; opacity: 0.9; color: #000a; text-align: right;">
+                     <%= email %>
+                  </td>
+               </tr>
+               <tr>
+                  <td
+                     style="border-bottom: 1px solid #123; font-size: 1.1rem; font-weight: bold; color: #000a;text-align: left;">
+                     Contraseña:</td>
+                  <td
+                     style="border-bottom: 1px solid #123; font-size: 1.1rem; opacity: 0.9; color: #000a;text-align: right;">
+                     <%= password %>
+                  </td>
+               </tr>
+            </table>
+         </div>
+      </section>
+   </main>
+</body>
+
+</html>

@@ -1,9 +1,9 @@
 import { cloudinary } from '../config/cloudinary.config';
 import { Readable } from "stream";
 // import { ErrorUploadImage } from '../utils';
-import { HandlerImage } from '../interfaces';
+import { HandleImage } from '../interfaces';
 
-export class Cloudinary implements HandlerImage {
+export class Cloudinary implements HandleImage {
    constructor(
       private readonly isUploadImage: boolean
    ) { }

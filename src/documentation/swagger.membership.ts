@@ -54,9 +54,6 @@
  *               discount:
  *                 type: integer
  *                 example: 10
- *               price_total:
- *                 type: integer
- *                 example: 1350
  *               isActive:
  *                 type: boolean
  *                 example: true
