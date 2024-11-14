@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { HandlerImage, ILocalServiceRepository } from '../../interfaces';
+import { HandleImage, ILocalServiceRepository } from '../../interfaces';
 import { BadRequestException, NotFoundException, UnauthorizedException, validateId } from '../../utils';
 import { LocalServiceDTO } from './DTO';
 
 export class LocalServicesController {
    constructor(
       private readonly localServiceRepository: ILocalServiceRepository,
-      private readonly handlerImage: HandlerImage,
+      private readonly handlerImage: HandleImage,
       private readonly nameFolder: string,
    ) { }
 

@@ -1,2 +1,2 @@
-export * from './IHandler.image';
+export * from './Iservices';
 export * from './repositories';

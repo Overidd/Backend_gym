@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { BadRequestException, NotFoundException, UnauthorizedException, validateArray, validateId } from "../../utils";
 import { CreateLocalDTO, queryString, UpdateLocalDTO } from ".";
-import { HandlerImage, ILocalRepository } from '../../interfaces';
+import { HandleImage, ILocalRepository } from '../../interfaces';
 
 // category=alimento&category=juguete, Express lo agrupa en un array: ['alimento', 'juguete'].
 export class LocalController {
    constructor(
       private readonly localRepository: ILocalRepository,
-      private readonly handlerImage: HandlerImage,
+      private readonly handlerImage: HandleImage,
    ) { }
 
    getAllLocation = async (_req: Request, res: Response) => {

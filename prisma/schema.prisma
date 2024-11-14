@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model Product {
@@ -44,7 +45,7 @@ model Trainer {
 model Local {
   id            Int             @id @default(autoincrement())
   name          String
-  description   String?          @db.Text
+  description   String?         @db.Text
   phone         String
   opening_start DateTime        @db.Time() // Hora de apertura (por ejemplo, 10:00 AM)
   opening_end   DateTime        @db.Time() // Hora de cierre (por ejemplo, 6:00 PM)
@@ -97,7 +98,7 @@ model LocalService {
 model ClassGym {
   id          Int          @id @default(autoincrement())
   name        String
-  icon        String?       @db.Text
+  icon        String?      @db.Text
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
   local_class LocalClass[]
@@ -106,8 +107,89 @@ model ClassGym {
 model ServiceGym {
   id            Int            @id @default(autoincrement())
   name          String
-  icon          String?         @db.Text
+  icon          String?        @db.Text
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
   local_service LocalService[]
+}
+
+//* ----------USER----------
+model User {
+  id                Int            @id @default(autoincrement())
+  email             String         @unique
+  password          String         @db.Text
+  is_user_temp      Boolean        @default(false)
+  first_name        String
+  last_name         String
+  is_active         Boolean        @default(true)
+  is_confirmed      Boolean        @default(false)
+  is_google_account Boolean        @default(false)
+  imagen            String?        @db.Text
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  Subscription      Subscription[]
+}
+
+//* ----------PLANS----------
+model Membership {
+  id                 String   @id @unique @default(uuid())
+  duration_in_months Int      @unique
+  name               String
+  price              Float
+  description        String?  @db.Text
+  discount           Float?   @default(0)
+  price_total        Float?
+  service_id         String
+  status             Boolean? @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  Plans              Plans[]
+}
+
+enum statusEnum {
+  PENDING
+  PAGADO
+  CANCELADO
+  VENCIDO
+  ACTIVO
+}
+
+model Plans {
+  id            Int            @id @default(autoincrement())
+  plan_id       String         @unique
+  email         String?
+  status        statusEnum
+  membership_id String
+  membership    Membership     @relation(fields: [membership_id], references: [id], onDelete: Cascade)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  Subscription  Subscription[]
+}
+
+model Subscription {
+  id               Int       @id @default(autoincrement())
+  membership_start DateTime  @db.Date()
+  membership_end   DateTime  @db.Date()
+  is_active        Boolean   @default(true)
+  access_code      String
+  subscription_id  String
+  plans_id         Int
+  plans            Plans     @relation(fields: [plans_id], references: [id], onDelete: Cascade)
+  user_id          Int
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+  Payment          Payment[]
+}
+
+model Payment {
+  id                     Int          @id @default(autoincrement())
+  amount                 Float
+  payment_date           DateTime
+  payment_method         String
+  currency_code          String
+  membership_id          Int
+  transaction_membership Subscription @relation(fields: [membership_id], references: [id], onDelete: Cascade)
+  created_at             DateTime     @default(now())
+  updated_at             DateTime     @updatedAt
 }

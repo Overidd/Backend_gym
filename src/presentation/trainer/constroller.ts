@@ -1,12 +1,12 @@
 import type { Request, Response } from 'express';
 import { TrainerDTO } from "./DTO";
 import { BadRequestException, NotFoundException, UnauthorizedException, validateId } from "../../utils";
-import { HandlerImage, ITrainerRepository } from '../../interfaces';
+import { HandleImage, ITrainerRepository } from '../../interfaces';
 
 export class TrainerController {
    constructor(
       private readonly TrainerRepository: ITrainerRepository,
-      private readonly handlerImage: HandlerImage,
+      private readonly handlerImage: HandleImage,
    ) { }
 
    public getAllTrainers = async (_req: Request, res: Response) => {
