@@ -121,9 +121,7 @@
                },
             });
          },
-
          onApprove: async function (data, actions) {
-
             const response = await fetch(`http://localhost:3003/api/v1/subscription/success/${data.subscriptionID}`, {
                method: "POST",
                headers: {
