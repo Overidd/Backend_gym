@@ -9,8 +9,8 @@ export type ICreateUser = {
    imagen?: string,
 
    is_user_temp?: boolean,
-   is_confirmed: boolean,
-   is_google_account: boolean,
+   is_confirmed?: boolean,
+   is_google_account?: boolean,
 }
 
 export type IUpdateUser = {

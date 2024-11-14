@@ -99,7 +99,7 @@
                   "Content-Type": "application/json",
                },
                body: JSON.stringify({
-                  "membership_id": "c4a1dd1a-f5e2-419c-a16c-4dbc5788186c",
+                  membership_id: "009ecc45-44cc-4e1e-a930-32731155b26b",
                }),
             });
 
@@ -107,26 +107,35 @@
             console.log("Plan ID recibido de la API:", dataJson.planId);
 
             if (response.status !== 201) {
-               throw new Error("No se recibió un plan ID válido de la API");
+               throw new Error(dataJson.message || dataJson.messages);
             }
 
             return actions.subscription.create({
-               plan_id: 'P-00T80607L5857831NM4ZWQFA'
+               plan_id: dataJson.planId
             });
          },
 
-         onApprove: function (data, actions) {
+         onApprove: async function (data, actions) {
 
-            fetch(`http://localhost:3002/api/v1/subscription/create/subscription/${data.subscriptionID}`, {
-               method: "GET",
+            const response = await fetch(`http://localhost:3002/api/v1/subscription/success/${data.subscriptionID}`, {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({
+                  email: "jorma1425@gmail.com",
+                  first_name: "jorma",
+                  last_name: "doe",
+               }),
             })
-               .then(response => response.json())
-               .then(data => {
-                  alert("Suscripción completada con éxito");
-               })
-               .catch((error) => {
-                  console.error("Error al guardar la suscripción:", error);
-               });
+
+            const dataJson = await response.json();
+
+            if (response.status !== 200) {
+               throw new Error(dataJson.message || dataJson.messages);
+            }
+            alert('¡Suscripción activa!');
+            console.log(dataJson);
          },
          onError: function (err) {
             console.error("Error en el proceso de suscripción:", err);

@@ -18,12 +18,12 @@ const UserSchema = z.object({
    }),
 
    password: z.string({
-      required_error: 'La contrasenya es requerida',
-      invalid_type_error: 'La contrasenya debe ser una cadena',
+      required_error: 'La contraseña es requerida',
+      invalid_type_error: 'La contraseña debe ser una cadena',
    }).min(8, {
-      message: 'La contrasenya debe tener como minimo 8 caracteres',
+      message: 'La contraseña debe tener como minimo 8 caracteres',
    }).max(255, {
-      message: 'La contrasenya debe tener como maximo 255 caracteres',
+      message: 'La contraseña debe tener como maximo 255 caracteres',
    }),
    
    is_active: z.boolean({

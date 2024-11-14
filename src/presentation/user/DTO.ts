@@ -8,9 +8,9 @@ export class DTOCreateUser {
       public readonly first_name: string,
       public readonly last_name: string,
       public readonly email: string,
-      public  password: string,
-      public readonly is_confirmed: boolean,
-      public readonly is_google_account: boolean,
+      public password: string,
+      public readonly is_confirmed?: boolean,
+      public readonly is_google_account?: boolean,
       public readonly is_active?: boolean,
       public readonly imagen?: string,
       public readonly is_user_temp?: boolean,
@@ -19,7 +19,7 @@ export class DTOCreateUser {
    static create(props: ICreateUser, imagen?: string, isGeneratePassword = false) {
       try {
 
-         if (!isGeneratePassword) {
+         if (isGeneratePassword) {
             props.password = generatePassword(12);
          }
 
@@ -33,9 +33,9 @@ export class DTOCreateUser {
          const validateImage = imagen ? imagen : undefined
 
          if (
-            typeof props.is_confirmed !== 'boolean' ||
-            typeof props.is_google_account !== 'boolean' ||
-            typeof props.is_active !== 'boolean'
+            (props.is_confirmed && typeof props.is_confirmed !== 'boolean') ||
+            (props.is_google_account && typeof props.is_google_account !== 'boolean') ||
+            (props.is_active && typeof props.is_active !== 'boolean')
          ) {
             throw new Error();
          }
@@ -55,8 +55,8 @@ export class DTOCreateUser {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
          }
+         throw new Error();
       }
-      throw new Error();
    }
 }
 
@@ -93,7 +93,7 @@ export class DTOUpdateUser {
          if (error instanceof z.ZodError) {
             throw new BadRequestException(error.errors.map(e => e.message).join(', '))
          }
+         throw new Error();
       }
-      throw new Error();
    }
 }

@@ -151,6 +151,8 @@ export class ControllerSubscription {
                messages: error.messages
             });
          }
+         console.log(error, 'error');
+
          return res.status(500).json({
             messages: ['Error inesperado del servidor']
          });
@@ -180,16 +182,22 @@ export class ControllerSubscription {
          }
       }
       const user = await this.repositoryUser.validateUser(undefined, body.email);
-      if (!user){
-         const validateDataUser = DTOCreateUser.create({ ...body, is_user_temp: true }, undefined, true);
+
+      if (!user) {
+         const validateDataUser = DTOCreateUser.create(
+            { ...body, is_user_temp: true }, undefined, true
+         );
+
          return await this.repositoryUser.create(validateDataUser);
-      } 
+      }
       return user
    }
 
    // Función para actualizar usuario temporal a permanente
    private async updateTempUserToPermanent(user: IResUserTemp) {
+      console.log(user, 'user');
       const hashedPassword = await this.handlePassword.hashPassword(user.password!, 10);
+
       await this.repositoryUser.update(user.id, { password: hashedPassword, is_user_temp: false });
    }
 
