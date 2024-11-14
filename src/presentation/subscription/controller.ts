@@ -137,15 +137,23 @@ export class ControllerSubscription {
 
       } catch (error) {
          if (error instanceof BadRequestException) {
-            return res.status(400).json({ messages: error.messages });
+            return res.status(400).json({
+               messages: error.messages
+            });
          }
          if (error instanceof NotFoundException) {
-            return res.status(404).json({ message: error.message });
+            return res.status(404).json({
+               message: error.message
+            });
          }
          if (error instanceof InternalServerError) {
-            return res.status(500).json({ messages: error.messages });
+            return res.status(500).json({
+               messages: error.messages
+            });
          }
-         return res.status(500).json({ messages: ['Error inesperado del servidor'] });
+         return res.status(500).json({
+            messages: ['Error inesperado del servidor']
+         });
       }
    };
 
@@ -171,8 +179,12 @@ export class ControllerSubscription {
             if (user) return user;
          }
       }
-      const validateDataUser = DTOCreateUser.create({ ...body, is_user_temp: true }, undefined, true);
-      return await this.repositoryUser.create(validateDataUser);
+      const user = await this.repositoryUser.validateUser(undefined, body.email);
+      if (!user){
+         const validateDataUser = DTOCreateUser.create({ ...body, is_user_temp: true }, undefined, true);
+         return await this.repositoryUser.create(validateDataUser);
+      } 
+      return user
    }
 
    // Función para actualizar usuario temporal a permanente

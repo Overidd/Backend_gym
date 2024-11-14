@@ -72,22 +72,20 @@ export class UserRepository implements IRepositoryUser {
          throw new Error();
       }
    }
-   async validateUser(id: number): Promise<IResUser | null> {
+   async validateUser(id?: number, email?: string): Promise<IResUser | null> {
       try {
+         const filter: { id?: number; email?: string } = {};
+         if (id) filter.id = id;
+         if (email) filter.email = email;
 
-         const user = await prisma.user.findUnique({
-            where: {
-               id: id
-            }
-         })
-         if (!user) {
-            return null
-         }
-         return user
+         const user = await prisma.user.findFirst({ where: filter });
+         return user || null;
       } catch (error) {
-         return null
+         console.error("Error al validar el usuario:", error);
+         return null;
       }
    }
+
    async createTemp(data: DTOCreateUser): Promise<IResUserTemp> {
       try {
          const newUser = await prisma.user.create({
