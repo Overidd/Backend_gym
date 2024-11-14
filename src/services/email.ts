@@ -33,7 +33,7 @@ export class EmailNodemailer {
          const mailOptions = {
             from: `Servicio gym <${envs.email_name}>`,
             to: payload.email,
-            subject: 'Bienvenido' + payload.name,
+            subject: 'Bienvenido ' + payload.name,
             html: htmlContent,
             attachments: [
                {
@@ -48,7 +48,6 @@ export class EmailNodemailer {
 
          return result;
       } catch (error) {
-         console.error('Error al enviar el correo:', error);
          return null;
       }
    }

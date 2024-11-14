@@ -147,10 +147,10 @@ export class Paypal {
             ],
             payment_preferences: {
                auto_bill_outstanding: true,
-               setup_fee: {
-                  value: data.value,
-                  currency_code: "USD"
-               },
+               // setup_fee: {
+               //    value: data.value,
+               //    currency_code: "USD"
+               // },
                setup_fee_failure_action: "CANCEL",
                payment_failure_threshold: 2
             },
@@ -202,7 +202,6 @@ export class Paypal {
 
          return dataJson.id;
       } catch (error) {
-         console.log(error);
          throw new Error();
       }
    };

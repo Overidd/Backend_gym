@@ -2,10 +2,10 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../data/postgres";
 import { IRepositoryUser } from "../../interfaces";
 import { DTOCreateUser, DTOUpdateUser } from "./DTO";
-import { IResUser, IResUserTemp } from "./types";
+import { IResUser } from "./types";
 import { NotFoundException } from "../../utils";
 
-export class UserRepository implements IRepositoryUser {
+export class RepositoryUser implements IRepositoryUser {
    async create(data: DTOCreateUser): Promise<IResUser> {
       try {
          const newUser = await prisma.user.create({
@@ -34,7 +34,6 @@ export class UserRepository implements IRepositoryUser {
                updated_at: true,
             }
          })
-         console.log(newUser, 'newUser');
          return newUser
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -59,6 +58,7 @@ export class UserRepository implements IRepositoryUser {
                is_active: data.is_active,
                is_confirmed: data.is_confirmed,
                is_google_account: data.is_google_account,
+               is_user_temp: data.is_user_temp,
             }
          })
 
@@ -81,12 +81,11 @@ export class UserRepository implements IRepositoryUser {
          const user = await prisma.user.findFirst({ where: filter });
          return user || null;
       } catch (error) {
-         console.error("Error al validar el usuario:", error);
          return null;
       }
    }
 
-   async createTemp(data: DTOCreateUser): Promise<IResUserTemp> {
+   async createTemp(data: DTOCreateUser): Promise<IResUser> {
       try {
          const newUser = await prisma.user.create({
             data: {
@@ -101,7 +100,6 @@ export class UserRepository implements IRepositoryUser {
                is_user_temp: data.is_user_temp,
             },
          })
-         console.log(newUser, 'newUser');
          return newUser
       } catch (error) {
          if (error instanceof Prisma.PrismaClientKnownRequestError) {

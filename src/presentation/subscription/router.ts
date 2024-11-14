@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { Paypal, JwtCustom, BcryptCustom } from '../../services'
-import { UserRepository } from '../user'
+import { RepositoryUser } from '../user'
 import { RepositoryMembership } from '../membership/repository'
 import { ControllerSubscription } from './controller'
 import { RespositorySubscription } from './repository'
@@ -13,7 +13,7 @@ export class RouterSubscription {
    public get router(): Router {
       const router = Router()
       const repositoryMembership = new RepositoryMembership()
-      const repositoryUser = new UserRepository()
+      const repositoryUser = new RepositoryUser()
       const repositorySubscription = new RespositorySubscription()
       const servicePaypal = new Paypal()
 
@@ -33,7 +33,7 @@ export class RouterSubscription {
 
       router.post('/success/:suscripcionId', controller.successfulSubscription)
 
-      router.get('/cancel/:planId', controller.cancelSubscription)
+      router.get('/cancel/plan/:planId', controller.cancelSubscription)
 
       return router
    }

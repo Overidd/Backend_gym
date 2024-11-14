@@ -93,7 +93,7 @@
             label: "paypal",
          },
          createSubscription: async function (data, actions) {
-            const response = await fetch("http://localhost:3002/api/v1/subscription/create/plan", {
+            const response = await fetch("http://localhost:3003/api/v1/subscription/create/plan", {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
@@ -111,31 +111,49 @@
             }
 
             return actions.subscription.create({
-               plan_id: dataJson.planId
+               plan_id: dataJson.planId,
+               subscriber: {
+                  name: {
+                     given_name: "Jorma",
+                     surname: "Doe"
+                  },
+                  email_address: "jorma1425@gmail.com"
+               },
             });
          },
 
          onApprove: async function (data, actions) {
 
-            const response = await fetch(`http://localhost:3002/api/v1/subscription/success/${data.subscriptionID}`, {
+            const response = await fetch(`http://localhost:3003/api/v1/subscription/success/${data.subscriptionID}`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
                },
                body: JSON.stringify({
                   email: "jorma1425@gmail.com",
-                  first_name: "jorma",
+                  first_name: "Jorma",
                   last_name: "doe",
                }),
             })
 
             const dataJson = await response.json();
 
-            if (response.status !== 200) {
+            if (response.status !== 201) {
                throw new Error(dataJson.message || dataJson.messages);
             }
             alert('¡Suscripción activa!');
             console.log(dataJson);
+         },
+         onCancel: async function (data) {
+            // const response = await fetch(`http://localhost:3003/api/v1/subscription/cancel/${planId}`, {
+            //    method: "GET",
+            //    headers: {
+            //       "Content-Type": "application/json",
+            //    },
+            // })"03U65680602445805"
+            console.log('Se cancelo el pago');
+            console.log(data, 'data cancel');
+
          },
          onError: function (err) {
             console.error("Error en el proceso de suscripción:", err);

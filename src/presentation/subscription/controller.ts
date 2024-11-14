@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { HandleJwt, HandlePassword, HandlePaypal, HandleQrCode, HandleSendEmaiL, IRepositoryMembership, IRepositoryUser, IRespositorySubscription } from '../../interfaces';
 import { BadRequestException, InternalServerError, NotFoundException } from '../../utils';
 import { DTOcreatePlan, DTOcreateSubscription, DTOupdatePlan } from './DTO';
-import { DTOCreateUser, IResUserTemp } from '../user';
+import { DTOCreateUser, IResUser } from '../user';
 import { StatusEnum } from './types';
 
 export class ControllerSubscription {
@@ -25,11 +25,11 @@ export class ControllerSubscription {
          const validateData = DTOcreatePlan.create(body)
 
          // Validamos el id de la membresia
-         const isMembership = await this.respositoryMembership.validateMembership(
+         const membership = await this.respositoryMembership.validateMembership(
             validateData.membership_id
          );
 
-         if (!isMembership) {
+         if (!membership) {
             throw new BadRequestException(['La membresia no existe']);
          }
 
@@ -39,9 +39,9 @@ export class ControllerSubscription {
          // Creamos el plan en paypal
          const newPlanId = await this.handlePaypal.createPlan(
             accessToken, {
-            product_id: isMembership.service_id,
-            interval_month: isMembership.duration_in_months,
-            value: String(isMembership.price),
+            product_id: membership.service_id,
+            interval_month: membership.duration_in_months,
+            value: String(membership.price_total || membership.price),
          });
 
          if (!newPlanId) {
@@ -95,11 +95,16 @@ export class ControllerSubscription {
 
          // Verificar suscripción
          const checkSubscription = await this.handlePaypal.checkSubscription(accessToken, suscripcionId);
-         this.validateSubscription(checkSubscription);
 
+         if (!checkSubscription || checkSubscription.status !== 'ACTIVE') {
+            throw new InternalServerError(['No es posible continuar con el pago', 'Error inesperado del servidor']);
+         }
          // Obtener el plan
          const plan = await this.repositorySubscription.getByIdPlan(checkSubscription!.plan_id);
          if (!plan) throw new BadRequestException('La membresía no existe');
+
+         const validateData = DTOupdatePlan.update({ status: StatusEnum.PAGADO })
+         await this.repositorySubscription.updatePlan(plan.id, validateData)
 
          // Calcular fechas de suscripción
          const { dateStart, dateEnd } = this.calculateSubscriptionDates(plan);
@@ -133,7 +138,9 @@ export class ControllerSubscription {
          // Actualizar usuario temporal
          if (user.is_user_temp) await this.updateTempUserToPermanent(user);
 
-         return res.status(201).json({ message: 'Pago exitoso' });
+         return res.status(201).json({
+            message: 'Pago exitoso'
+         });
 
       } catch (error) {
          if (error instanceof BadRequestException) {
@@ -151,19 +158,11 @@ export class ControllerSubscription {
                messages: error.messages
             });
          }
-         console.log(error, 'error');
-
          return res.status(500).json({
             messages: ['Error inesperado del servidor']
          });
       }
    };
-
-   private validateSubscription(checkSubscription: any) {
-      if (!checkSubscription || checkSubscription.status !== 'ACTIVE') {
-         throw new InternalServerError(['No es posible continuar con el pago', 'Error inesperado del servidor']);
-      }
-   }
 
    private calculateSubscriptionDates(plan: any) {
       const dateEnd = new Date();
@@ -187,21 +186,24 @@ export class ControllerSubscription {
          const validateDataUser = DTOCreateUser.create(
             { ...body, is_user_temp: true }, undefined, true
          );
-
-         return await this.repositoryUser.create(validateDataUser);
+         const newUser = await this.repositoryUser.createTemp(validateDataUser);
+         return newUser
       }
       return user
    }
 
    // Función para actualizar usuario temporal a permanente
-   private async updateTempUserToPermanent(user: IResUserTemp) {
-      console.log(user, 'user');
+   private async updateTempUserToPermanent(user: IResUser) {
       const hashedPassword = await this.handlePassword.hashPassword(user.password!, 10);
 
-      await this.repositoryUser.update(user.id, { password: hashedPassword, is_user_temp: false });
+      await this.repositoryUser.update(
+         user.id, {
+         password: hashedPassword,
+         is_user_temp: false,
+      });
    }
 
-   private async sendEmails(user: IResUserTemp, qrCode: string, code: string): Promise<boolean> {
+   private async sendEmails(user: IResUser, qrCode: string, code: string): Promise<boolean> {
       if (user.is_user_temp) {
          const sendEmailResend = await this.handleEmailResend.sendEmailmembers({
             name: user.first_name,
@@ -263,7 +265,7 @@ export class ControllerSubscription {
          await this.repositorySubscription.updatePlan(planId, validateData)
 
          return res.status(200).json({
-            message: 'Suscripcion cancelada',
+            message: 'Plan cancelada',
          })
 
       } catch (error) {
@@ -272,6 +274,11 @@ export class ControllerSubscription {
                message: error.message
             })
          };
+         if (error instanceof NotFoundException) {
+            return res.status(404).json({
+               message: error.message
+            })
+         }
          return res.status(500).json({
             messages: ['Error inesperado del servidor']
          })

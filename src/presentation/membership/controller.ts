@@ -79,7 +79,10 @@ export class ControllerMembership {
                name: validateDate.name,
                description: validateDate.description,
             })
-            console.log(updateService);
+
+            if (!updateService){
+               throw new Error('Error al actualizar el servicio')
+            }
          }
 
          return res.status(200).json({

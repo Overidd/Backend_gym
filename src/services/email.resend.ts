@@ -15,7 +15,7 @@ export class EmailResend {
       const { data, error } = await resend.emails.send({
          from: 'Gym <onboarding@resend.dev>',
          to: [payload.email],
-         subject: 'Bienvenido' + payload.name,
+         subject: 'Bienvenido ' + payload.name,
          html: htmlContent,
 
          attachments: [
