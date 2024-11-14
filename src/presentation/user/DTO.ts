@@ -1,5 +1,5 @@
 import z from 'zod';
-import { BadRequestException } from '../../utils';
+import { BadRequestException, generatePassword } from '../../utils';
 import { createUserSchema, updateUserSchema } from "./schema";
 import { ICreateUser, IUpdateUser } from "./types";
 
@@ -8,7 +8,7 @@ export class DTOCreateUser {
       public readonly first_name: string,
       public readonly last_name: string,
       public readonly email: string,
-      public readonly password: string,
+      public  password: string,
       public readonly is_confirmed: boolean,
       public readonly is_google_account: boolean,
       public readonly is_active?: boolean,
@@ -16,8 +16,13 @@ export class DTOCreateUser {
       public readonly is_user_temp?: boolean,
    ) { }
 
-   static create(props: ICreateUser, imagen?: string) {
+   static create(props: ICreateUser, imagen?: string, isGeneratePassword = false) {
       try {
+
+         if (!isGeneratePassword) {
+            props.password = generatePassword(12);
+         }
+
          const validateData = createUserSchema.parse({
             first_name: props.first_name,
             last_name: props.last_name,

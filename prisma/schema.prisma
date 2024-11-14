@@ -131,18 +131,18 @@ model User {
 
 //* ----------PLANS----------
 model Membership {
-  id                 String         @id @unique @default(uuid())
-  duration_in_months Int            @unique
+  id                 String   @id @unique @default(uuid())
+  duration_in_months Int      @unique
   name               String
   price              Float
-  description        String?        @db.Text
-  discount           Float?         @default(0)
+  description        String?  @db.Text
+  discount           Float?   @default(0)
   price_total        Float?
   service_id         String
-  status             Boolean?       @default(true)
-  created_at         DateTime       @default(now())
-  updated_at         DateTime       @updatedAt
-  Subscription       Subscription[]
+  status             Boolean? @default(true)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  Plans              Plans[]
 }
 
 enum statusEnum {
@@ -153,21 +153,31 @@ enum statusEnum {
   ACTIVO
 }
 
+model Plans {
+  id            Int            @id @default(autoincrement())
+  plan_id       String         @unique
+  email         String?
+  status        statusEnum
+  membership_id String
+  membership    Membership     @relation(fields: [membership_id], references: [id], onDelete: Cascade)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  Subscription  Subscription[]
+}
+
 model Subscription {
-  id               Int        @id @default(autoincrement())
-  membership_end   DateTime   @db.Date()
-  membership_start DateTime   @db.Date()
-  is_active        Boolean    @default(true)
-  access_code      String?
-  plan_id          String     @unique
-  subscription_id  String?
-  status           statusEnum
+  id               Int       @id @default(autoincrement())
+  membership_start DateTime  @db.Date()
+  membership_end   DateTime  @db.Date()
+  is_active        Boolean   @default(true)
+  access_code      String
+  subscription_id  String
+  plans_id         Int
+  plans            Plans     @relation(fields: [plans_id], references: [id], onDelete: Cascade)
   user_id          Int
-  user             User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  membership_id    String
-  membership       Membership @relation(fields: [membership_id], references: [id], onDelete: Cascade)
-  created_at       DateTime   @default(now())
-  updated_at       DateTime   @updatedAt
+  user             User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
   Payment          Payment[]
 }
 

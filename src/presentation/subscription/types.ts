@@ -1,10 +1,12 @@
 import z from 'zod'
 
-import { createplanSchema, updatesubscriptionSchema } from './schema'
+import { createplanSchema, updateplanSchema, updatesubscriptionSchema } from './schema'
 import { $Enums } from '@prisma/client';
 
 export type ICreatePlan = z.infer<typeof createplanSchema>
+export type IUpdatePlan = z.infer<typeof updateplanSchema>
 export type IUpdateSubscription = z.infer<typeof updatesubscriptionSchema>
+
 
 export enum StatusEnum {
   PENDING = "PENDING",
@@ -15,26 +17,26 @@ export enum StatusEnum {
 }
 
 export type ICreateSubscription = {
-  membership_start: Date;
-  membership_end: Date;
-  plan_id: string;
-  status: StatusEnum;
-  user_id: number;
-  membership_id: string;
+  membership_start: Date,
+  membership_end: Date,
+  access_code: string,
+  subscription_id: string,
+  status: StatusEnum,
+  plan_id: number,
+  user_id: number | undefined,
 }
 
 export type IResGenaral = {
   id: number;
-  membership_start: Date;
   membership_end: Date;
+  membership_start: Date;
   is_active: boolean;
   access_code: string | null;
-  plan_id: string;
   subscription_id: string | null;
-  status: $Enums.statusEnum;
   user_id: number;
-  membership_id: string;
   created_at: Date;
+  updated_at: Date;
+  plans_id: number;
 }
 
 export type IResSubscription = {
@@ -58,4 +60,18 @@ export type IResSubscription = {
     is_user_temp: boolean,
     password: string,
   };
+}
+
+export type IResPlan = {
+  id: number,
+  plan_id: string,
+  email?: string | null,
+  status: $Enums.statusEnum,
+  membership_id: string,
+  created_at: Date,
+  updated_at: Date,
+
+  membership?: {
+    duration_in_months: number,
+  }
 }

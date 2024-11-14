@@ -2,7 +2,7 @@
 //* router.post('/create', controller.createPlan)
 /**
  * @swagger
- * /api/v1/subscription/create:
+ * /api/v1/subscription/create/plan:
  *   post:
  *     summary: Crear plan de membresia
  *     tags: [Subscription]

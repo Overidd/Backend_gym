@@ -136,6 +136,7 @@ export class Paypal {
                   tenure_type: "REGULAR",
                   sequence: 1, // 1 = Primer ciclo de facturación
                   total_cycles: 0, // 0 = ilimitado
+                  
                   pricing_scheme: {
                      fixed_price: {
                         value: data.value,
@@ -238,7 +239,7 @@ export class Paypal {
          return false
       }
    }
-
+   
    async createSubscription(access_token: string, data: IPayloadSubscription): Promise<string | null> {
       try {
          const payload = {

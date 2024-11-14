@@ -1,26 +1,26 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../data/postgres";
+
 import { IRespositorySubscription } from "../../interfaces";
-import { DTOcreateSubscription, DTOupdateSubscription } from "./DTO";
+import { DTOcreatePlan, DTOcreateSubscription, DTOupdatePlan, DTOupdateSubscription } from "./DTO";
+import { IResGenaral, IResPlan, IResSubscription, IUpdateSubscription } from "./types";
 import { NotFoundException } from "../../utils";
-import { IResGenaral, IResSubscription, IUpdateSubscription, StatusEnum } from "./types";
 
 export class RespositorySubscription implements IRespositorySubscription {
-   async update(id: string | number, data: DTOupdateSubscription | IUpdateSubscription): Promise<IResGenaral> {
+   async update(id: number, data: DTOupdateSubscription | IUpdateSubscription): Promise<IResGenaral> {
       try {
-         const whereValue = typeof id === 'string'
-            ? { plan_id: id as string }
-            : { id: id as number };
-
          const update = await prisma.subscription.update({
-            where: whereValue,
+            where: {
+               id: id as number
+            },
             data: {
                membership_end: data.membership_end,
                membership_start: data.membership_start,
-               plan_id: data.plan_id,
                user_id: data.user_id,
-               membership_id: data.membership_id,
-               ...(data.status && { status: data.status as StatusEnum })
+               access_code: data.access_code,
+               is_active: data.is_active,
+               plans_id: data.plan_id,
+               subscription_id: data.subscription_id,
             }
          })
 
@@ -34,31 +34,75 @@ export class RespositorySubscription implements IRespositorySubscription {
          throw new Error();
       }
    }
-   async getById(id: string | number): Promise<IResSubscription | null> {
+   async getByIdPlan(id: string): Promise<IResPlan | null> {
       try {
-         const whereValue = typeof id === 'string'
-            ? { plan_id: id as string }
-            : { id: id as number };
-
-         const subscription = await prisma.subscription.findFirst({
-            where: whereValue,
+         const plan = await prisma.plans.findUnique({
+            where: {
+               plan_id: id as string
+            },
             include: {
-               user: {
+               membership: {
                   select: {
-                     id:true,
-                     first_name: true,
-                     last_name: true,
-                     email: true,
-                     is_user_temp:true,
-                     password: true,
+                     duration_in_months: true
                   }
                }
-            },
-         });
-         return subscription;
+            }
+         })
+
+         return plan
       } catch (error) {
-         return null;
+         throw new Error();
       }
+   }
+   async cratePlan(data: DTOcreatePlan): Promise<IResPlan> {
+      try {
+         const newPlan = await prisma.plans.create({
+            data: {
+               plan_id: data.plan_id!,
+               email: data.email,
+               status: data.status!,
+               membership_id: data.membership_id
+            }
+         })
+         return newPlan
+      } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+               throw new NotFoundException(`El plan con el id ${data.plan_id} ya existe`);
+            }
+         }
+         throw new Error("Method not implemented.");
+      }
+
+   }
+   async updatePlan(id: number | string, data: DTOupdatePlan): Promise<IResPlan> {
+      try {
+         const whereId = typeof id === 'number'
+            ? { id: id as number }
+            : { plan_id: id as string };
+
+         const update = await prisma.plans.update({
+            where: whereId,
+            data: {
+               email: data.email,
+               status: data.status,
+               plan_id: data.plan_id,
+               membership_id: data.membership_id,
+            }
+         })
+
+         return update
+      } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2003') {
+               throw new NotFoundException(`La suscripcion con no existe`);
+            }
+         }
+         throw new Error();
+      }
+   }
+   async getById(_id: string | number): Promise<IResSubscription | null> {
+      throw new Error();
    }
    async createSubscription(date: DTOcreateSubscription): Promise<IResGenaral> {
       try {
@@ -66,10 +110,11 @@ export class RespositorySubscription implements IRespositorySubscription {
             data: {
                membership_end: date.membership_end,
                membership_start: date.membership_start,
-               plan_id: date.plan_id,
-               user_id: date.user_id,
-               membership_id: date.membership_id,
-               status: date.status,
+               plans_id: date.plan_id!,
+               user_id: date.user_id!,
+               access_code: date.access_code,
+               subscription_id: date.subscription_id,
+               is_active: true,
             }
          })
          return newSubcription

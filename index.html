@@ -6,13 +6,20 @@
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Document</title>
 </head>
+<style>
+   body {
+      cursor: pointer;
+   }
+</style>
 
 <body>
-   <div id="paypal-button-container"></div>
+   <!-- 
+   <script
+      src="https://www.paypal.com/sdk/js?client-id=AV1uL-M4qBVKPCj2M5pO5mksUY5iqA6gW0vXhBuqYQWnfHnH_qSB4juSA68Nop_s71oXgn49znwPzLrc&vault=true"></script> -->
 
    <script
-      src="https://www.paypal.com/sdk/js?client-id=AV1uL-M4qBVKPCj2M5pO5mksUY5iqA6gW0vXhBuqYQWnfHnH_qSB4juSA68Nop_s71oXgn49znwPzLrc&vault=true">
-      </script>
+      src="https://www.paypal.com/sdk/js?client-id=AV1uL-M4qBVKPCj2M5pO5mksUY5iqA6gW0vXhBuqYQWnfHnH_qSB4juSA68Nop_s71oXgn49znwPzLrc&vault=true&intent=subscription"></script>
+
    <!-- <script>
       paypal.Buttons({
          createSubscription: function (data, actions) {
@@ -76,116 +83,58 @@
          }
       }).render('#paypal-button-container'); // Renderiza el botón en el contenedor
    </script> -->
-
+   <div id="paypal-button-container"></div>
    <script>
-      window.paypal
-         .Buttons({
-            style: {
-               shape: "rect",
-               layout: "vertical",
-               color: "gold",
-               label: "paypal",
-            },
-            message: {
-               amount: 100,
-            },
+      window.paypal.Buttons({
+         style: {
+            shape: "rect",
+            layout: "vertical",
+            color: "gold",
+            label: "paypal",
+         },
+         createSubscription: async function (data, actions) {
+            const response = await fetch("http://localhost:3002/api/v1/subscription/create/plan", {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({
+                  "membership_id": "c4a1dd1a-f5e2-419c-a16c-4dbc5788186c",
+               }),
+            });
 
-            async createOrder() {
-               try {
-                  const response = await fetch("/api/orders", {
-                     method: "POST",
-                     headers: {
-                        "Content-Type": "application/json",
-                     },
-                     // use the "body" param to optionally pass additional order information
-                     // like product ids and quantities
-                     body: JSON.stringify({
-                        cart: [
-                           {
-                              id: "YOUR_PRODUCT_ID",
-                              quantity: "YOUR_PRODUCT_QUANTITY",
-                           },
-                        ],
-                     }),
-                  });
+            const dataJson = await response.json();
+            console.log("Plan ID recibido de la API:", dataJson.planId);
 
-                  const orderData = await response.json();
+            if (response.status !== 201) {
+               throw new Error("No se recibió un plan ID válido de la API");
+            }
 
-                  if (orderData.id) {
-                     return orderData.id;
-                  }
-                  const errorDetail = orderData?.details?.[0];
-                  const errorMessage = errorDetail
-                     ? `${errorDetail.issue} ${errorDetail.description} (${orderData.debug_id})`
-                     : JSON.stringify(orderData);
+            return actions.subscription.create({
+               plan_id: 'P-00T80607L5857831NM4ZWQFA'
+            });
+         },
 
-                  throw new Error(errorMessage);
-               } catch (error) {
-                  console.error(error);
-                  // resultMessage(`Could not initiate PayPal Checkout...<br><br>${error}`);
-               }
-            },
+         onApprove: function (data, actions) {
 
-            async onApprove(data, actions) {
-               try {
-                  const response = await fetch(
-                     `/api/orders/${data.orderID}/capture`,
-                     {
-                        method: "POST",
-                        headers: {
-                           "Content-Type": "application/json",
-                        },
-                     }
-                  );
-
-                  const orderData = await response.json();
-                  // Three cases to handle:
-                  //   (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                  //   (2) Other non-recoverable errors -> Show a failure message
-                  //   (3) Successful transaction -> Show confirmation or thank you message
-
-                  const errorDetail = orderData?.details?.[0];
-
-                  if (errorDetail?.issue === "INSTRUMENT_DECLINED") {
-                     // (1) Recoverable INSTRUMENT_DECLINED -> call actions.restart()
-                     // recoverable state, per
-                     // https://developer.paypal.com/docs/checkout/standard/customize/handle-funding-failures/
-                     return actions.restart();
-                  } else if (errorDetail) {
-                     // (2) Other non-recoverable errors -> Show a failure message
-                     throw new Error(
-                        `${errorDetail.description} (${orderData.debug_id})`
-                     );
-                  } else if (!orderData.purchase_units) {
-                     throw new Error(JSON.stringify(orderData));
-                  } else {
-                     // (3) Successful transaction -> Show confirmation or thank you message
-                     // Or go to another URL:  actions.redirect('thank_you.html');
-                     const transaction =
-                        orderData?.purchase_units?.[0]?.payments
-                           ?.captures?.[0] ||
-                        orderData?.purchase_units?.[0]?.payments
-                           ?.authorizations?.[0];
-                     resultMessage(
-                        `Transaction ${transaction.status}: ${transaction.id}<br>
-          <br>See console for all available details`
-                     );
-                     console.log(
-                        "Capture result",
-                        orderData,
-                        JSON.stringify(orderData, null, 2)
-                     );
-                  }
-               } catch (error) {
-                  console.error(error);
-                  resultMessage(
-                     `Sorry, your transaction could not be processed...<br><br>${error}`
-                  );
-               }
-            },
-         })
-         .render("#paypal-button-container"); 
+            fetch(`http://localhost:3002/api/v1/subscription/create/subscription/${data.subscriptionID}`, {
+               method: "GET",
+            })
+               .then(response => response.json())
+               .then(data => {
+                  alert("Suscripción completada con éxito");
+               })
+               .catch((error) => {
+                  console.error("Error al guardar la suscripción:", error);
+               });
+         },
+         onError: function (err) {
+            console.error("Error en el proceso de suscripción:", err);
+         }
+      }).render("#paypal-button-container");
    </script>
+
+
 </body>
 
 </html>

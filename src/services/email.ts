@@ -31,7 +31,7 @@ export class EmailNodemailer {
          });
 
          const mailOptions = {
-            from: 'Servicio gym <johnelvis963@gmail.com>',
+            from: `Servicio gym <${envs.email_name}>`,
             to: payload.email,
             subject: 'Bienvenido' + payload.name,
             html: htmlContent,

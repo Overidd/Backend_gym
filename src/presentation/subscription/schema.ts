@@ -2,28 +2,27 @@ import z from 'zod'
 
 
 export const SchemaPlan = z.object({
-   membership_id: z.string({
-      required_error: 'El ID de la membresía es requerido',
-   }),
-
    email: z.string({
       invalid_type_error: 'El correo electrónico debe ser una dirección de correo electrónico',
    }).email({
       message: 'El correo electrónico debe ser una dirección de correo electrónico',
    }).optional(),
 
-   first_name: z.string({
-      invalid_type_error: 'El Nombre debe ser una cadena',
-   }).max(150, {
-      message: 'El Nombre debe tener como maximo 150 caracteres',
+   plan_id: z.string({
+      required_error: 'El ID de la membresía es requerido',
    }).optional(),
 
-   last_name: z.string({
-      invalid_type_error: 'El apellido debe ser una cadena',
+   status: z.string({
+      required_error: 'El estado de la membresía es requerido',
    }).optional(),
+   
+   membership_id: z.string({
+      required_error: 'El ID de la membresía es requerido',
+   }),
 })
 
 export const createplanSchema = SchemaPlan.omit({})
+export const updateplanSchema = SchemaPlan.partial()
 
 export const SchemaSubscription = z.object({
    membership_end: z.date({
@@ -38,8 +37,8 @@ export const SchemaSubscription = z.object({
    access_code: z.string({
       invalid_type_error: 'El codigo de acceso debe ser una cadena',
    }).optional(),
-   plan_id: z.string({
-      invalid_type_error: 'El ID de la membresía se un cadena',
+   plan_id: z.number({
+      invalid_type_error: 'El ID de la membresía se un numero',
    }).optional(),
    subscription_id: z.string({
       invalid_type_error: 'El ID de la membresía se un cadena',

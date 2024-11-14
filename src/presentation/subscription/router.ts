@@ -29,11 +29,11 @@ export class RouterSubscription {
          repositorySubscription,
       )
 
-      router.post('/create', controller.createPlan)
+      router.post('/create/plan', controller.createPlan)
 
-      router.get('/success', controller.successfulSubscription)
+      router.post('/success/:suscripcionId', controller.successfulSubscription)
 
-      router.get('/cancel', controller.cancelSubscription)
+      router.get('/cancel/:planId', controller.cancelSubscription)
 
       return router
    }

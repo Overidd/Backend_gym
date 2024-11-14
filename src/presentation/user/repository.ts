@@ -2,10 +2,49 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../data/postgres";
 import { IRepositoryUser } from "../../interfaces";
 import { DTOCreateUser, DTOUpdateUser } from "./DTO";
-import { IResUser } from "./types";
+import { IResUser, IResUserTemp } from "./types";
 import { NotFoundException } from "../../utils";
 
 export class UserRepository implements IRepositoryUser {
+   async create(data: DTOCreateUser): Promise<IResUser> {
+      try {
+         const newUser = await prisma.user.create({
+            data: {
+               email: data.email,
+               password: data.password,
+               first_name: data.first_name,
+               last_name: data.last_name,
+               is_active: data.is_active,
+               is_confirmed: data.is_confirmed,
+               is_google_account: data.is_google_account,
+               imagen: data.imagen,
+               is_user_temp: data.is_user_temp,
+            },
+            select: {
+               id: true,
+               email: true,
+               first_name: true,
+               last_name: true,
+               is_active: true,
+               is_confirmed: true,
+               is_google_account: true,
+               is_user_temp: true,
+               imagen: true,
+               created_at: true,
+               updated_at: true,
+            }
+         })
+         console.log(newUser, 'newUser');
+         return newUser
+      } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+               throw new NotFoundException(`El usuario ya existe`);
+            };
+         };
+         throw new Error();
+      }
+   }
    async update(id: number, data: DTOUpdateUser): Promise<IResUser> {
       try {
          const user = await prisma.user.update({
@@ -33,23 +72,23 @@ export class UserRepository implements IRepositoryUser {
          throw new Error();
       }
    }
-   async validateUser(id: number): Promise<boolean> {
+   async validateUser(id: number): Promise<IResUser | null> {
       try {
 
-         const isUser = await prisma.user.findUnique({
+         const user = await prisma.user.findUnique({
             where: {
                id: id
             }
          })
-         if (!isUser) {
-            return false
+         if (!user) {
+            return null
          }
-         return true
+         return user
       } catch (error) {
-         return false
+         return null
       }
    }
-   async create(data: DTOCreateUser): Promise<IResUser> {
+   async createTemp(data: DTOCreateUser): Promise<IResUserTemp> {
       try {
          const newUser = await prisma.user.create({
             data: {
@@ -60,23 +99,18 @@ export class UserRepository implements IRepositoryUser {
                is_active: data.is_active,
                is_confirmed: data.is_confirmed,
                is_google_account: data.is_google_account,
-               imagen: data.imagen
+               imagen: data.imagen,
+               is_user_temp: data.is_user_temp,
             },
-            select: {
-               id: true,
-               email: true,
-               first_name: true,
-               last_name: true,
-               is_active: true,
-               is_confirmed: true,
-               is_google_account: true,
-               imagen: true,
-               created_at: true,
-               updated_at: true
-            }
          })
+         console.log(newUser, 'newUser');
          return newUser
       } catch (error) {
+         if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            if (error.code === 'P2002') {
+               throw new NotFoundException(`El usuario ya existe`);
+            };
+         };
          throw new Error();
       }
    }

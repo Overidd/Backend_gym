@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 
-import { BadRequestException, generatePassword, InternalServerError, NotFoundException } from '../../utils';
 import { HandleJwt, HandlePassword, HandlePaypal, HandleQrCode, HandleSendEmaiL, IRepositoryMembership, IRepositoryUser, IRespositorySubscription } from '../../interfaces';
-import { DTOcreatePlan, DTOcreateSubscription } from './DTO';
-import { DTOCreateUser } from '../user';
-import { IResSubscription, StatusEnum } from './types';
+import { BadRequestException, InternalServerError, NotFoundException } from '../../utils';
+import { DTOcreatePlan, DTOcreateSubscription, DTOupdatePlan } from './DTO';
+import { DTOCreateUser, IResUserTemp } from '../user';
+import { StatusEnum } from './types';
 
 export class ControllerSubscription {
-
    constructor(
       private readonly handlePaypal: HandlePaypal,
       private readonly handleJwt: HandleJwt,
@@ -23,10 +22,7 @@ export class ControllerSubscription {
    public createPlan = async (req: Request, res: Response) => {
       try {
          const body = req.body
-         const authHeader = req.headers.authorization;
-
          const validateData = DTOcreatePlan.create(body)
-         console.log(validateData)
 
          // Validamos el id de la membresia
          const isMembership = await this.respositoryMembership.validateMembership(
@@ -37,55 +33,10 @@ export class ControllerSubscription {
             throw new BadRequestException(['La membresia no existe']);
          }
 
-         // Verificar si existe un usuario 
-         if (authHeader && authHeader.startsWith('Bearer ')) {
-            const payload = this.handleJwt.decodeToken(authHeader.split(' ')[1])
-
-            if (!payload) {
-               throw new InternalServerError(
-                  ['No es posible continuar con el pago', 'Error inesperado del servidor']
-               )
-            }
-
-            const isUser = this.repositoryUser.validateUser(
-               payload?.userId
-            );
-
-            if (!isUser) {
-               throw new NotFoundException('El usuario no existe');
-            }
-
-            validateData.user_id = payload?.userId
-
-         } else {
-            const newPassword = generatePassword(12);
-            const userValidateDate = DTOCreateUser.create({
-               first_name: body.first_name,
-               last_name: body.last_name,
-               email: body.email,
-               password: newPassword,
-               is_confirmed: false,
-               is_google_account: false,
-               is_user_temp: true,
-               is_active: true,
-            });
-
-            const newUser = await this.repositoryUser.create(
-               userValidateDate
-            );
-            validateData.user_id = newUser.id;
-         }
-
-         if (!validateData.user_id) {
-            throw new InternalServerError(
-               ['No es posible continuar con el pago', 'Error inesperado del servidor']
-            )
-         }
-
-         // Generamos un token de acceso usando la api de paypal
+         // Generamos un token
          const accessToken = await this.handlePaypal.getAccessToken();
 
-         // Creamos el plan de membresias usando la api de paypal
+         // Creamos el plan en paypal
          const newPlanId = await this.handlePaypal.createPlan(
             accessToken, {
             product_id: isMembership.service_id,
@@ -94,33 +45,22 @@ export class ControllerSubscription {
          });
 
          if (!newPlanId) {
+            throw new BadRequestException(['Error al crear el plan de membresias']);
+         }
+
+         validateData.plan_id = newPlanId;
+         validateData.status = StatusEnum.PENDING;
+
+         // Creamos el plan
+         const newPlan = await this.repositorySubscription.cratePlan(validateData)
+
+         if (!newPlanId) {
             throw new NotFoundException('La membresias no existe');
          }
 
-         const dateEnd = new Date()
-         const dateStart = new Date(dateEnd.setMonth(
-            dateEnd.getMonth() +
-            isMembership.duration_in_months
-         ));
-         // Creamos la suscripcion
-         const validateDataSub = DTOcreateSubscription.create({
-            membership_end: dateEnd,
-            membership_start: dateStart,
-            plan_id: newPlanId,
-            user_id: validateData.user_id,
-            membership_id: isMembership.id,
-            status: StatusEnum.PENDING,
-         })
-
-         const newSubscription = await this.repositorySubscription.createSubscription(
-            validateDataSub
-         )
-
          return res.status(201).json({
             message: 'Plan creado exitosamente',
-            data: {
-               planId: newSubscription.plan_id,
-            }
+            planId: newPlan.plan_id,
          })
       } catch (error) {
          if (error instanceof BadRequestException) {
@@ -128,75 +68,11 @@ export class ControllerSubscription {
                messages: error.messages
             })
          };
-
          if (error instanceof NotFoundException) {
             return res.status(404).json({
                message: error.message
             })
          };
-
-         if (error instanceof InternalServerError) {
-            return res.status(500).json({
-               messages: error.messages
-            })
-         };
-
-         return res.status(500).json({
-            messages: ['Error inesperado del servidor']
-         })
-      }
-   }
-
-   public createSubscription = async (req: Request, res: Response) => {
-      try {
-         const planId = req.params.planId
-
-         const accessToken = await this.handlePaypal.getAccessToken();
-
-         const suscription = await this.repositorySubscription.getById(planId)
-
-         if (!suscription) {
-            throw new NotFoundException('La membresias no existe');
-         }
-
-         const newSubscription = await this.handlePaypal.createSubscription(
-            accessToken, {
-            email: suscription.user.email,
-            fistName: suscription.user.first_name,
-            lastName: suscription.user.last_name,
-            planId: suscription.plan_id,
-         });
-
-         if (!newSubscription) {
-            throw new InternalServerError(
-               ['No es posible continuar con el pago', 'Error inesperado del servidor']
-            )
-         }
-
-         await this.repositorySubscription.update(suscription.plan_id, {
-            subscription_id: newSubscription,
-         })
-
-         return res.status(201).json({
-            message: 'Plan creado exitosamente',
-            data: {
-               suscriptionId: newSubscription,
-            }
-         })
-
-      } catch (error) {
-         if (error instanceof BadRequestException) {
-            return res.status(400).json({
-               messages: error.messages
-            })
-         };
-
-         if (error instanceof NotFoundException) {
-            return res.status(404).json({
-               message: error.message
-            })
-         };
-
          if (error instanceof InternalServerError) {
             return res.status(500).json({
                messages: error.messages
@@ -210,118 +86,103 @@ export class ControllerSubscription {
 
    public successfulSubscription = async (req: Request, res: Response) => {
       try {
-         const planId = req.params.planId
+         const suscripcionId = req.params.suscripcionId;
+         const authHeader = req.headers.authorization;
+         const body = req.body;
 
-         const subscription = await this.repositorySubscription.getById(planId)
+         // Obtener token de acceso
+         const accessToken = await this.handlePaypal.getAccessToken();
 
-         if (!subscription) {
-            throw new NotFoundException('La membresias no existe');
-         }
-         const accessToken = await this.handlePaypal.getAccessToken()
+         // Verificar suscripción
+         const checkSubscription = await this.handlePaypal.checkSubscription(accessToken, suscripcionId);
+         this.validateSubscription(checkSubscription);
 
-         const checkSubscription = await this.handlePaypal.checkSubscription(accessToken, subscription.subscription_id!)
+         // Obtener el plan
+         const plan = await this.repositorySubscription.getByIdPlan(checkSubscription!.plan_id);
+         if (!plan) throw new BadRequestException('La membresía no existe');
 
-         if (!checkSubscription) {
-            throw new InternalServerError(
-               ['No es posible continuar con el pago', 'Error inesperado del servidor']
-            )
-         }
+         // Calcular fechas de suscripción
+         const { dateStart, dateEnd } = this.calculateSubscriptionDates(plan);
 
-         if (checkSubscription.status != 'ACTIVE') {
-            throw new InternalServerError(
-               ['Ocurrio un error al momento de validar el pago', 'Error inesperado del servidor']
-            )
-         }
+         // Generar código de acceso y QR
+         const { code, qrCode } = await this.handleQrCode.generateQrCode(4);
 
-         await this.repositorySubscription.update(subscription.plan_id, {
-            status: StatusEnum.ACTIVO,
-         })
+         // Crear datos de suscripción
+         const validateDataSub = DTOcreateSubscription.create({
+            membership_end: dateEnd,
+            membership_start: dateStart,
+            access_code: code,
+            subscription_id: checkSubscription!.id,
+            plan_id: plan.id,
+            status: StatusEnum.PAGADO,
+            user_id: undefined,
+         });
 
-         // Generamos qr
-         const { qrCode, code } = await this.handleQrCode.generateQrCode(4)
+         // Obtener o crear usuario
+         const user = await this.getOrCreateUser(authHeader, body);
+         validateDataSub.user_id = user.id;
 
+         // Crear suscripción
+         await this.repositorySubscription.createSubscription(validateDataSub);
 
-         if (subscription.user.is_user_temp) {
-            const isSend = await this.sendEmails(subscription, qrCode, code, true)
+         // Enviar correos electrónicos
+         const sendEmail = await this.sendEmails(user, qrCode, code)
 
-            if (!isSend) {
-               throw new InternalServerError(
-                  ['No es posible continuar con el pago', 'Error inesperado del servidor']
-               )
-            }
-            // hashear contraseña
-            const hashedPassword = await this.handlePassword.hashPassword(subscription.user.password, 10)
+         if (!sendEmail) throw new BadRequestException('Error al enviar el correo');
 
-            await this.repositoryUser.update(
-               subscription.user.id, {
-               password: hashedPassword
-            })
-         } else {
-            const isSend = await this.sendEmails(subscription, qrCode, code, false)
+         // Actualizar usuario temporal
+         if (user.is_user_temp) await this.updateTempUserToPermanent(user);
 
-            if (!isSend) {
-               throw new InternalServerError(
-                  ['No es posible continuar con el pago', 'Error inesperado del servidor']
-               )
-            }
-         }
-
-         return res.status(200).json({
-            message: 'Pago exitoso',
-         })
+         return res.status(201).json({ message: 'Pago exitoso' });
 
       } catch (error) {
          if (error instanceof BadRequestException) {
-            return res.status(400).json({
-               messages: error.messages
-            })
-         };
-
+            return res.status(400).json({ messages: error.messages });
+         }
          if (error instanceof NotFoundException) {
-            return res.status(404).json({
-               message: error.message
-            })
+            return res.status(404).json({ message: error.message });
          }
          if (error instanceof InternalServerError) {
-            return res.status(500).json({
-               messages: error.messages
-            })
-         };
-         return res.status(500).json({
-            messages: ['Error inesperado del servidor']
-         })
+            return res.status(500).json({ messages: error.messages });
+         }
+         return res.status(500).json({ messages: ['Error inesperado del servidor'] });
+      }
+   };
+
+   private validateSubscription(checkSubscription: any) {
+      if (!checkSubscription || checkSubscription.status !== 'ACTIVE') {
+         throw new InternalServerError(['No es posible continuar con el pago', 'Error inesperado del servidor']);
       }
    }
 
-   public cancelSubscription = async (req: Request, res: Response) => {
-      try {
-         const planId = req.params.planId
-
-         await this.repositorySubscription.update(
-            planId, {
-            status: StatusEnum.CANCELADO
-         })
-
-         return res.status(200).json({
-            message: 'Suscripcion cancelada',
-         })
-
-      } catch (error) {
-         if (error instanceof NotFoundException) {
-            return res.status(404).json({
-               message: error.message
-            })
-         };
-         return res.status(500).json({
-            messages: ['Error inesperado del servidor']
-         })
-      }
+   private calculateSubscriptionDates(plan: any) {
+      const dateEnd = new Date();
+      const dateStart = new Date(dateEnd.setMonth(dateEnd.getMonth() + plan.membership?.duration_in_months!));
+      return { dateStart, dateEnd };
    }
 
-   private async sendEmails(subscription: IResSubscription, qrCode: string, code: string, isUserTemp: boolean): Promise<boolean> {
-      const { user } = subscription
+   // Función para obtener o crear usuario
+   private async getOrCreateUser(authHeader: string | undefined, body: any) {
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+         const token = authHeader.split(' ')[1];
+         const payload = this.handleJwt.decodeToken(token);
+         if (payload) {
+            const user = await this.repositoryUser.validateUser(payload.userId);
+            if (user) return user;
+         }
+      }
+      const validateDataUser = DTOCreateUser.create({ ...body, is_user_temp: true }, undefined, true);
+      return await this.repositoryUser.create(validateDataUser);
+   }
 
-      if (isUserTemp) {
+   // Función para actualizar usuario temporal a permanente
+   private async updateTempUserToPermanent(user: IResUserTemp) {
+      const hashedPassword = await this.handlePassword.hashPassword(user.password!, 10);
+      await this.repositoryUser.update(user.id, { password: hashedPassword, is_user_temp: false });
+   }
+
+   private async sendEmails(user: IResUserTemp, qrCode: string, code: string): Promise<boolean> {
+      if (user.is_user_temp) {
          const sendEmailResend = await this.handleEmailResend.sendEmailmembers({
             name: user.first_name,
             codeAccess: code,
@@ -370,6 +231,30 @@ export class ControllerSubscription {
             }
          }
          return true
+      }
+   }
+
+   public cancelSubscription = async (req: Request, res: Response) => {
+      try {
+         const planId = req.params.planId
+
+         const validateData = DTOupdatePlan.update({ status: StatusEnum.CANCELADO })
+
+         await this.repositorySubscription.updatePlan(planId, validateData)
+
+         return res.status(200).json({
+            message: 'Suscripcion cancelada',
+         })
+
+      } catch (error) {
+         if (error instanceof NotFoundException) {
+            return res.status(404).json({
+               message: error.message
+            })
+         };
+         return res.status(500).json({
+            messages: ['Error inesperado del servidor']
+         })
       }
    }
 }

@@ -1,24 +1,55 @@
 import z from 'zod'
 
-import { createplanSchema, updatesubscriptionSchema } from "./schema";
-import { ICreatePlan, ICreateSubscription, IUpdateSubscription, StatusEnum } from "./types";
+import { createplanSchema, updateplanSchema, updatesubscriptionSchema } from "./schema";
+import { ICreatePlan, ICreateSubscription, IUpdatePlan, IUpdateSubscription, StatusEnum } from "./types";
 import { BadRequestException } from '../../utils';
 
 export class DTOcreatePlan {
    constructor(
+      public email: string | undefined,
+      public plan_id: string | undefined,
+      public status: StatusEnum | undefined,
       public readonly membership_id: string,
-      public user_id?: number,
    ) { }
 
    static create(props: ICreatePlan): DTOcreatePlan {
       try {
          const validateData = createplanSchema.parse(props)
 
-         return new DTOcreatePlan(validateData.membership_id)
-
+         return new DTOcreatePlan(
+            validateData.email,
+            validateData.plan_id,
+            validateData.status as StatusEnum,
+            validateData.membership_id
+         )
       } catch (error) {
-         if (error instanceof z.ZodError) {
-            throw new BadRequestException(error.errors.map(e => e.message).join(', '))
+         if (error instanceof BadRequestException) {
+            throw new BadRequestException(error.message)
+         }
+         throw new Error();
+      }
+   }
+}
+
+export class DTOupdatePlan {
+   constructor(
+      public readonly email: string | undefined,
+      public readonly plan_id: string | undefined,
+      public readonly status: StatusEnum | undefined,
+      public readonly membership_id: string | undefined,
+   ) { }
+   static update(props: IUpdatePlan): DTOupdatePlan {
+      try {
+         const validateData = updateplanSchema.parse(props)
+         return new DTOupdatePlan(
+            validateData.email,
+            validateData.plan_id,
+            validateData.status as StatusEnum,
+            validateData.membership_id
+         )
+      } catch (error) {
+         if (error instanceof BadRequestException) {
+            throw new BadRequestException(error.message)
          }
          throw new Error();
       }
@@ -29,10 +60,12 @@ export class DTOcreateSubscription {
    constructor(
       public readonly membership_start: Date,
       public readonly membership_end: Date,
-      public readonly plan_id: string,
-      public readonly user_id: number,
-      public readonly membership_id: string,
+      public readonly access_code: string,
+      public readonly subscription_id: string,
       public readonly status: StatusEnum,
+
+      public readonly plan_id: number,
+      public user_id: number | undefined,
    ) { }
 
    static create(props: ICreateSubscription): DTOcreateSubscription {
@@ -40,10 +73,11 @@ export class DTOcreateSubscription {
          return new DTOcreateSubscription(
             props.membership_start,
             props.membership_end,
+            props.access_code,
+            props.subscription_id,
+            props.status,
             props.plan_id,
             props.user_id,
-            props.membership_id,
-            props.status,
          )
       } catch (error) {
          throw new Error();
@@ -57,7 +91,7 @@ export class DTOupdateSubscription {
       public readonly membership_end: Date | undefined,
       public readonly is_active: boolean | undefined,
       public readonly access_code: string | undefined,
-      public readonly plan_id: string | undefined,
+      public readonly plan_id: number | undefined,
       public readonly subscription_id: string | undefined,
       public readonly membership_id: string | undefined,
       public readonly user_id: number | undefined,
