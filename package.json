@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "ts-node-dev src/app.ts",
-    "build": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc && cp -r src/templates dist/templates",
     "start": "node dist/app.js",
     "test": "node --test",
     "build:test": "npm run build && npm run test"

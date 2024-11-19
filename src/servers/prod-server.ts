@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import swaggerUI from 'swagger-ui-express'
 import { swaggerSpec } from '../config';
+import path from 'path';
 
 export class Server {
    public readonly app = express();
@@ -17,6 +18,8 @@ export class Server {
    public async start() {
 
       this.app.disable('x-powered-by');
+      this.app.set('views', path.join(__dirname, '../templates'));
+      this.app.set('view engine', 'ejs');
 
       //* Middlewares
       this.app.use(express.json());
@@ -31,6 +34,6 @@ export class Server {
          console.log(`Server is running on port ${this.port}`);
       });
 
-   } 
+   }
 }
 

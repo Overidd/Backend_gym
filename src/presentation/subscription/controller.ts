@@ -93,18 +93,15 @@ export class ControllerSubscription {
          // Obtener token de acceso
          const accessToken = await this.handlePaypal.getAccessToken();
 
-         console.log('suscripcionId', suscripcionId);
          // Verificar suscripción
          const checkSubscription = await this.handlePaypal.checkSubscription(accessToken, suscripcionId);
 
          if (!checkSubscription || checkSubscription.status !== 'ACTIVE') {
             throw new InternalServerError(['No es posible continuar con el pago', 'Error inesperado del servidor']);
          }
-         console.log(checkSubscription, 'checkSubscription');
          // Obtener el plan
          const plan = await this.repositorySubscription.getByIdPlan(checkSubscription!.plan_id);
          if (!plan) throw new BadRequestException('La membresía no existe');
-         console.log(plan, 'plan');
          const validateData = DTOupdatePlan.update({ status: StatusEnum.PAGADO })
          await this.repositorySubscription.updatePlan(plan.id, validateData)
 
@@ -160,7 +157,6 @@ export class ControllerSubscription {
                messages: error.messages
             });
          }
-         console.log(error);
          return res.status(500).json({
             messages: ['Error inesperado del servidor']
          });
